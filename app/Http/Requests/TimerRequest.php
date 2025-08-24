@@ -24,9 +24,7 @@ class TimerRequest extends FormRequest
     public function rules()
     {
         return [
-            'days' => 'required|numeric|min:1|max:31',
-            'hours' => 'required|numeric|min:1|max:24',
-            'minutes' => 'required|numeric|min:1|max:59',
+            'time' => 'required|date|after_or_equal:now',
         ];
     }
 }

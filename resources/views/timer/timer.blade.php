@@ -32,44 +32,25 @@
                 @csrf
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-4">
+
+                        <div class="col-md-6">
                             <div class="form-group">
-                                <label for="days">Days <span class="required">*</span></label>
+                                <label for="time">Time <span class="required">*</span></label>
                                 <input
-                                    type="number"
-                                    name="days"
-                                    class="form-control numericInput"
-                                    id="days"
-                                    placeholder="Days"
-                                    value="{{old('days', ($data && $data->days) ? $data->days : "")}}"
+                                    type="datetime-local"
+                                    name="time"
+                                    class="form-control"
+                                    id="time"
+                                    placeholder="Minutes"
+                                    min="{{ now()->format('Y-m-d\TH:i') }}"
+                                    value="{{ old('time', ($data && $data->time) ? \Carbon\Carbon::createFromTimestamp($data->time, 'Asia/Dhaka')->format('Y-m-d\TH:i') : "") }}"
                                 >
-                                @error('days')
+                                @error('time')
                                     <span class="alert alert-danger">{{ $message }}</span>
                                 @enderror
                             </div>
                         </div>
 
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label for="hours">Hours <span class="required">*</span></label>
-                                <input type="text" name="hours" class="form-control numericInput" id="hours"
-                                       placeholder="Hours"  value="{{old('hours', ($data && $data->hours) ? $data->hours : "")}}">
-                                @error('hours')
-                                <span class="alert alert-danger">{{ $message }}</span>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label for="minutes">Minutes <span class="required">*</span></label>
-                                <input type="text" name="minutes" class="form-control numericInput" id="minutes"
-                                       placeholder="Minutes"  value="{{old('minutes', ($data && $data->minutes) ? $data->minutes : "")}}">
-                                @error('minutes')
-                                <span class="alert alert-danger">{{ $message }}</span>
-                                @enderror
-                            </div>
-                        </div>
                     </div>
 
                     <div class="form-group w-100">
