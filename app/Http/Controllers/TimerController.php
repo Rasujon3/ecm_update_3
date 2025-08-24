@@ -27,6 +27,7 @@ class TimerController extends Controller
             $data = Timer::where('user_id', user()->id)->first();
 
             $defaults = [
+                'title' => $data ? $data->title : null,
                 'time' => $data ? $data->time : null,
             ];
 
@@ -35,6 +36,7 @@ class TimerController extends Controller
                     [
                         'user_id' => user()->id,
 			            'domain_id' => getDomain()->id,
+                        'title' => $request->title ?? $defaults['title'],
                         'time' => Carbon::parse($request->time)->timestamp ?? $defaults['time'],
                     ]
                 );
@@ -43,6 +45,7 @@ class TimerController extends Controller
                     [
                         'user_id' => user()->id,
 			            'domain_id' => getDomain()->id,
+                        'title' => $request->title ?? $defaults['title'],
                         'time' => Carbon::parse($request->time)->timestamp ?? $defaults['time'],
                     ]
                 );

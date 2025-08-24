@@ -32,7 +32,16 @@
                 @csrf
                 <div class="card-body">
                     <div class="row">
-
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="title">Title <span class="required">*</span></label>
+                                <input type="text" name="title" class="form-control" id="title"
+                                       placeholder="Title"  value="{{old('title', $data ? $data->title : "")}}">
+                                @error('title')
+                                <span class="alert alert-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="time">Time <span class="required">*</span></label>

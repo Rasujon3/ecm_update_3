@@ -1447,12 +1447,27 @@ class ApiController extends Controller
 
             $domain = domainDetails($request);
 
-            $data = Timer::where('domain_id', $domain?->id)->get();
+            $data = Timer::where('domain_id', $domain?->id)->first();
 
+            $transformedData = [];
+            if ($data) {
+                $transformedData = [
+                    'id' => $data->id,
+                    'domain_id' => $data->domain_id,
+                    'user_id' => $data->user_id,
+                    'title' => $data->title,
+                    # 'time_iso_format' => \Carbon\Carbon::createFromTimestamp($data->time, 'Asia/Dhaka')->toISOString(), // ISO format like created_at
+                    # 'time_readable' => \Carbon\Carbon::createFromTimestamp($data->time, 'Asia/Dhaka')->format('d M Y, h:i A'), // Human readable
+                    # 'timestamp' => $data->time,
+                    'time' => \Carbon\Carbon::createFromTimestamp($data->time, 'Asia/Dhaka')->toISOString(), // ISO format like created_at,
+                    'created_at' => $data->created_at,
+                    'updated_at' => $data->updated_at,
+                ];
+            }
 
             return response()->json([
-                'status' => !empty($data),
-                'data' => $data
+                'status' => !empty($transformedData),
+                'data' => $transformedData
             ]);
 
         } catch(Exception $e) {

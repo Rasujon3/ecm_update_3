@@ -14,6 +14,7 @@ class Timer extends Model
     protected $fillable = [
         'user_id',
         'domain_id',
+        'title',
         'time',
     ];
 
