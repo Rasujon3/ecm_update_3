@@ -7,6 +7,7 @@ use App\Http\Controllers\ProductCharacteristicsController;
 use App\Http\Controllers\ProductCharacteristicsDetailsController;
 use App\Http\Controllers\ProductNarrativeController;
 use App\Http\Controllers\ProductNarrativeDetailsController;
+use App\Http\Controllers\TimerController;
 use App\Http\Controllers\WhyChooseUsController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SliderController;
@@ -139,6 +140,10 @@ Route::group(['middleware' => 'prevent-back-history'],function(){
     // Banner Text
     Route::get('/banner-text', [BannerTextController::class, 'index'])->name('banner-text');
     Route::post('banner-text', [BannerTextController::class, 'store'])->name('banner-text.store');
+
+    // Timer
+    Route::get('/timer', [TimerController::class, 'index'])->name('timer');
+    Route::post('timer', [TimerController::class, 'store'])->name('timer.store');
 
     // Conversion
     Route::get('/conversions', [ConversionController::class, 'index'])->name('conversions');

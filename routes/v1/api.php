@@ -72,4 +72,6 @@ Route::middleware(['custom.cors', 'throttle:60,1'])->group(function () {
     Route::post('product-characteristics', [ApiController::class, 'productCharacteristics']);
 
     Route::post('product-narrative', [ApiController::class, 'productNarrative']);
+
+    Route::post('timer', [ApiController::class, 'timer']);
 });
