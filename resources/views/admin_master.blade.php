@@ -394,6 +394,15 @@
            </li>
 
            <li class="nav-item">
+               <a href="{{ route('size-measurement') }}" class="nav-link">
+                   <i class="nav-icon fas fa-ruler"></i>
+                   <p>
+                       Size Measurement
+                   </p>
+               </a>
+           </li>
+
+           <li class="nav-item">
                <a href="{{ route('timer') }}" class="nav-link">
                    <i class="nav-icon fas fa-clock"></i>
                    <p>
@@ -410,6 +419,14 @@
                    </p>
                </a>
            </li>
+           <li class="nav-item">
+                   <a href="{{ route('all-product-content') }}" class="nav-link">
+                       <i class="nav-icon fas fa-clock"></i>
+                       <p>
+                           All Product Content
+                       </p>
+                   </a>
+               </li>
           <li class="nav-item">
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-th"></i>
@@ -612,6 +629,30 @@
           </li>
 
           <li class="nav-item">
+                   <a href="#" class="nav-link">
+                       <i class="nav-icon fas fa-eye"></i>
+                       <p>
+                           Take a Look
+                           <i class="fas fa-angle-left right"></i>
+                       </p>
+                   </a>
+                   <ul class="nav nav-treeview">
+                       <li class="nav-item">
+                           <a href="{{ route('take-a-look-title') }}" class="nav-link">
+                               <i class="far fa-text-width nav-icon"></i>
+                               <p>Title</p>
+                           </a>
+                       </li>
+                       <li class="nav-item">
+                           <a href="{{ route('take-a-look-images.index') }}" class="nav-link">
+                               <i class="nav-icon fas fa-desktop"></i>
+                               <p>Image</p>
+                           </a>
+                       </li>
+                   </ul>
+               </li>
+
+          <li class="nav-item">
             <a href="{{url('/add-video')}}" class="nav-link">
               <i class="nav-icon fas fa-video"></i>
               <p>
@@ -678,13 +719,28 @@
           </li>
 
           <li class="nav-item">
-            <a href="{{ route('why_choose_us.index') }}" class="nav-link">
-              <i class="nav-icon fas fa-cog"></i>
-              <p>
-                Why Choose Us
-              </p>
-            </a>
-          </li>
+                   <a href="#" class="nav-link">
+                       <i class="nav-icon fas fa-cog"></i>
+                       <p>
+                           Why Choose Us
+                           <i class="fas fa-angle-left right"></i>
+                       </p>
+                   </a>
+                   <ul class="nav nav-treeview">
+                       <li class="nav-item">
+                           <a href="{{ route('why-choose-us-title') }}" class="nav-link">
+                               <i class="far fa-text-width nav-icon"></i>
+                               <p>Title</p>
+                           </a>
+                       </li>
+                       <li class="nav-item">
+                           <a href="{{ route('why_choose_us.index') }}" class="nav-link">
+                               <i class="nav-icon fas fa-desktop"></i>
+                               <p>Content</p>
+                           </a>
+                       </li>
+                   </ul>
+               </li>
 
           @endif
 

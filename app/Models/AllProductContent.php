@@ -5,17 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class BannerText extends Model
+class AllProductContent extends Model
 {
     use HasFactory;
 
-    protected $table = 'banner_texts';
+    protected $table = 'all_product_contents';
 
     protected $fillable = [
         'user_id',
         'domain_id',
-        'banner_text',
+        'title',
         'description',
-        'contents',
     ];
 }

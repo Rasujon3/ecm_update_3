@@ -82,9 +82,9 @@
 
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="sub_title">Sub Title <span class="required">*</span></label>
+                                <label for="sub_title">Sub Title </label>
                                 <input type="text" name="sub_title" class="form-control" id="sub_title"
-                                       placeholder="Sub Title" required="" value="{{old('sub_title', $package->sub_title)}}">
+                                       placeholder="Sub Title" value="{{old('sub_title', $package->sub_title)}}">
                                 @error('sub_title')
                                     <span class="alert alert-danger">{{ $message }}</span>
                                 @enderror
@@ -93,9 +93,9 @@
 
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="demo_url">Demo URL <span class="required">*</span></label>
+                                <label for="demo_url">Demo URL </label>
                                 <input type="text" name="demo_url" class="form-control" id="demo_url"
-                                       placeholder="Demo URL" required="" value="{{old('demo_url', $package->demo_url)}}">
+                                       placeholder="Demo URL" value="{{old('demo_url', $package->demo_url)}}">
                                 @error('demo_url')
                                     <span class="alert alert-danger">{{ $message }}</span>
                                 @enderror

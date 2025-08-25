@@ -44,7 +44,20 @@
                             </div>
                         </div>
 
-
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="description">Description </label>
+                                <textarea
+                                    class="form-control description"
+                                    name="description"
+                                >
+                                    {!! old('description', $review->description) !!}
+                                </textarea>
+                                @error('description')
+                                    <span class="alert alert-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
 
                         <div class="col-md-12">
                             <div class="form-group">

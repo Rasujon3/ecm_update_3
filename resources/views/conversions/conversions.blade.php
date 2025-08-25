@@ -34,7 +34,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="facebook">Facebook <span class="required">*</span></label>
+                                <label for="facebook">Messenger <span class="required">*</span></label>
                                 <input type="text" name="facebook" class="form-control" id="facebook"
                                     placeholder="Facebook"  value="{{old('facebook', ($conversions && $conversions->facebook) ? $conversions->facebook : "")}}">
                                 @error('facebook')

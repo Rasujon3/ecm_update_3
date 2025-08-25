@@ -5,17 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class BannerText extends Model
+class WhyChooseUsTitle extends Model
 {
     use HasFactory;
 
-    protected $table = 'banner_texts';
+    protected $table = 'why_choose_us_title';
 
     protected $fillable = [
         'user_id',
         'domain_id',
-        'banner_text',
-        'description',
-        'contents',
+        'title',
     ];
 }

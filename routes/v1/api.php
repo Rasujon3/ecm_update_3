@@ -74,4 +74,12 @@ Route::middleware(['custom.cors', 'throttle:60,1'])->group(function () {
     Route::post('product-narrative', [ApiController::class, 'productNarrative']);
 
     Route::post('timer', [ApiController::class, 'timer']);
+
+    Route::post('banner-text', [ApiController::class, 'bannerText']);
+
+    Route::post('size-measurement', [ApiController::class, 'sizeMeasurement']);
+
+    Route::post('take-a-look', [ApiController::class, 'takeALook']);
+
+    Route::post('all-product-content', [ApiController::class, 'allProductContent']);
 });

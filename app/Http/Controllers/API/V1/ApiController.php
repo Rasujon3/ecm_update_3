@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\Http\Controllers\Controller;
+use App\Models\AllProductContent;
 use App\Models\BannerText;
 use App\Models\Conversation;
 use App\Models\OrderVariantId;
@@ -11,8 +12,12 @@ use App\Models\ProductCharacteristicsDetails;
 use App\Models\ProductCharacteristicsTitle;
 use App\Models\ProductNarrativeDetails;
 use App\Models\ProductNarrativeTitle;
+use App\Models\SizeMeasurement;
+use App\Models\TakeALook;
+use App\Models\TakeALookImg;
 use App\Models\Timer;
 use App\Models\WebsitePurchase;
+use App\Models\WhyChooseUsTitle;
 use Exception;
 use Illuminate\Http\Request;
 use App\Models\Domain;
@@ -209,14 +214,9 @@ class ApiController extends Controller
 	            $sliders = Slider::where('domain_id',$domain->id)->where('status','Active')->get();
 	        }
 
-            if ($domain) {
-                $bannerText = BannerText::where('domain_id',$domain?->id)->first();
-            }
-
 	        return response()->json([
                 'status'=>count($sliders)>0,
                 'total'=>count($sliders),
-                'bannerText' => !empty($bannerText && $bannerText->banner_text) ? $bannerText->banner_text : '',
                 'data'=>$sliders
             ]);
 
@@ -1155,10 +1155,16 @@ class ApiController extends Controller
         }
         try {
             $whyChooseUs = WhyChooseUs::where('user_id',$request->user_id)->latest()->get();
+            $titleData = WhyChooseUsTitle::where('user_id',$request->user_id)->first();
+            $title = null;
+            if ($titleData && (!empty($titleData->title))) {
+                $title = $titleData->title;
+            }
 
             return response()->json([
                 'status'  => true,
                 'message' => 'Why choose us retrieved successfully.',
+                'title'    => $title,
                 'data'    => $whyChooseUs
             ], 200);
         } catch(Exception $e) {
@@ -1468,6 +1474,167 @@ class ApiController extends Controller
             return response()->json([
                 'status' => !empty($transformedData),
                 'data' => $transformedData
+            ]);
+
+        } catch(Exception $e) {
+            return response()->json([
+                'status' => false,
+                'code' => $e->getCode(),
+                'message' => $e->getMessage()
+            ],500);
+        }
+    }
+
+    public function bannerText(Request $request)
+    {
+        try
+        {
+            $validator = Validator::make($request->all(), [
+                'domain' => 'required|string',
+                'user_id' => 'nullable|integer',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'The given data was invalid',
+                    'data' => $validator->errors()
+                ], 422);
+            }
+
+
+            $domain = domainDetails($request);
+
+            $data = null;
+            if ($domain) {
+                $data = BannerText::where('domain_id',$domain?->id)->first();
+            }
+
+            return response()->json([
+                'status' => (bool)$data,
+                'data' => $data
+            ]);
+
+        } catch(Exception $e) {
+            return response()->json([
+                'status' => false,
+                'code' => $e->getCode(),
+                'message' => $e->getMessage()
+            ],500);
+        }
+    }
+
+    public function sizeMeasurement(Request $request)
+    {
+        try
+        {
+            $validator = Validator::make($request->all(), [
+                'domain' => 'required|string',
+                'user_id' => 'nullable|integer',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'The given data was invalid',
+                    'data' => $validator->errors()
+                ], 422);
+            }
+
+
+            $domain = domainDetails($request);
+
+            $data = null;
+            if ($domain) {
+                $data = SizeMeasurement::where('domain_id',$domain?->id)->first();
+            }
+
+            return response()->json([
+                'status' => (bool)$data,
+                'data' => $data
+            ]);
+
+        } catch(Exception $e) {
+            return response()->json([
+                'status' => false,
+                'code' => $e->getCode(),
+                'message' => $e->getMessage()
+            ],500);
+        }
+    }
+    public function takeALook(Request $request)
+    {
+        try
+        {
+            $validator = Validator::make($request->all(), [
+                'domain' => 'required|string',
+                'user_id' => 'nullable|integer',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'The given data was invalid',
+                    'data' => $validator->errors()
+                ], 422);
+            }
+
+
+            $domain = domainDetails($request);
+
+            $title = null;
+            if ($domain) {
+                $takeALook = TakeALook::where('domain_id',$domain?->id)->first();
+                $title = ($takeALook && isset($takeALook->title)) ? $takeALook->title : null;
+            }
+
+            $img = [];
+            if ($domain) {
+                $img = TakeALookImg::where('domain_id',$domain?->id)->get();
+            }
+
+            return response()->json([
+                'status' => $title && count($img) > 0,
+                'title' => $title,
+                'img' => $img,
+            ]);
+
+        } catch(Exception $e) {
+            return response()->json([
+                'status' => false,
+                'code' => $e->getCode(),
+                'message' => $e->getMessage()
+            ],500);
+        }
+    }
+    public function allProductContent(Request $request)
+    {
+        try
+        {
+            $validator = Validator::make($request->all(), [
+                'domain' => 'required|string',
+                'user_id' => 'nullable|integer',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'The given data was invalid',
+                    'data' => $validator->errors()
+                ], 422);
+            }
+
+
+            $domain = domainDetails($request);
+
+            $data = null;
+            if ($domain) {
+                $data = AllProductContent::where('domain_id',$domain?->id)->first();
+            }
+
+            return response()->json([
+                'status' => (bool)$data,
+                'data' => $data,
             ]);
 
         } catch(Exception $e) {

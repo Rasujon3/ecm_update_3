@@ -109,9 +109,9 @@
 
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="discount_price">Discount Price (BDT) <span class="required">*</span></label>
+                                <label for="discount_price">Discount Price (BDT) </label>
                                 <input type="text" name="discount_price" class="form-control numericInput" id="discount_price"
-                                       placeholder="Discount Price" required="" value="{{old('discount_price',$product->discount_price)}}">
+                                       placeholder="Discount Price" value="{{old('discount_price',$product->discount_price)}}">
                                 @error('discount_price')
                                     <span class="alert alert-danger">{{ $message }}</span>
                                 @enderror

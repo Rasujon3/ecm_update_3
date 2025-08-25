@@ -94,13 +94,6 @@ class ProductController extends Controller
     {
         return view('products.create');
     }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(StoreProductRequest $request)
     {
         DB::beginTransaction();
@@ -116,6 +109,14 @@ class ProductController extends Controller
                 return redirect()->route('products.index')->with($notification);
             }
             $package = Package::where('id',getDomain()->package_id)->first();
+            if(!$package)
+            {
+                $notification=array(
+                    'messege' => 'Package not found.',
+                    'alert-type' => 'error',
+                );
+                return redirect()->back()->with($notification);
+            }
             if($count > $package->max_product)
             {
                 $notification=array(

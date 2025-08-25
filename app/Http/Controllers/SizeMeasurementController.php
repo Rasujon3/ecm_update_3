@@ -2,15 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\SizeMeasurementRequest;
 use App\Models\AboutUs;
 use App\Models\BannerText;
 use App\Models\LoginPageContent;
 use App\Models\Setting;
+use App\Models\SizeMeasurement;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
-class BannerTextController extends Controller
+class SizeMeasurementController extends Controller
 {
     public function __construct()
     {
@@ -18,39 +20,42 @@ class BannerTextController extends Controller
     }
     public function index()
     {
-        $bannerText = BannerText::where('user_id', user()->id)->first();
-        return view('bannerText.bannerText',compact('bannerText'));
+        $data = SizeMeasurement::where('user_id', user()->id)->first();
+        return view('sizeMeasurement.create',compact('data'));
     }
-    public function store(Request $request)
+    public function store(SizeMeasurementRequest $request)
     {
         try
         {
-            $data = BannerText::where('user_id', user()->id)->first();
+            $data = SizeMeasurement::where('user_id', user()->id)->first();
 
             $defaults = [
-                'banner_text' => $data ? $data->banner_text : null,
-                'description' => $data ? $data->description : null,
-                'contents' => $data ? $data->contents : null,
+                'img' => $data ? $data->img : null,
             ];
 
+            // Handle file upload
+            $img_url = $data ? $data->img : '';
+            if ($request->hasFile('img')) {
+                $filePath = $this->storeFile($request->file('img'));
+                $img_url = $filePath ?? '';
+            }
+            // Delete the old file if it exists
+            $this->deleteOldFile($data);
+
             if ($data) {
-                BannerText::where('id', $data->id)->update(
+                SizeMeasurement::where('id', $data->id)->update(
                     [
                         'user_id' => user()->id,
 			            'domain_id' => getDomain()->id,
-                        'banner_text' => $request->banner_text ?? $defaults['banner_text'],
-                        'description' => $request->description ?? $defaults['description'],
-                        'contents' => $request->contents ?? $defaults['contents'],
+                        'img' => $img_url,
                     ]
                 );
             } else {
-                BannerText::create(
+                SizeMeasurement::create(
                     [
                         'user_id' => user()->id,
 			            'domain_id' => getDomain()->id,
-                        'banner_text' => $request->banner_text ?? $defaults['banner_text'],
-                        'description' => $request->description ?? $defaults['description'],
-                        'contents' => $request->contents ?? $defaults['contents'],
+                        'img' => $img_url,
                     ]
                 );
             }
@@ -64,7 +69,7 @@ class BannerTextController extends Controller
 
         } catch (Exception $e) {
             // Log the error
-            Log::error('Error in updating BannerText: ', [
+            Log::error('Error in updating SizeMeasurement: ', [
                 'message' => $e->getMessage(),
                 'code' => $e->getCode(),
                 'line' => $e->getLine(),
@@ -82,7 +87,7 @@ class BannerTextController extends Controller
     {
         // Define the directory path
         // TODO: Change path if needed
-        $filePath = 'uploads/logo'; # change path if needed
+        $filePath = 'uploads/size_measurement'; # change path if needed
         $directory = public_path($filePath);
 
         // Ensure the directory exists
@@ -92,7 +97,7 @@ class BannerTextController extends Controller
 
         // Generate a unique file name
         // TODO: Change path if needed
-        $fileName = uniqid('logo_', true) . '.' . $file->getClientOriginalExtension();
+        $fileName = uniqid('size_measurement_', true) . '.' . $file->getClientOriginalExtension();
 
         // Move the file to the destination directory
         $file->move($directory, $fileName);
@@ -105,7 +110,7 @@ class BannerTextController extends Controller
     {
         // Define the directory path
         // TODO: Change path if needed
-        $filePath = 'uploads/logo'; # change path if needed
+        $filePath = 'uploads/size_measurement'; # change path if needed
         $directory = public_path($filePath);
 
         // Ensure the directory exists
@@ -115,7 +120,7 @@ class BannerTextController extends Controller
 
         // Generate a unique file name
         // TODO: Change path following storeFile function
-        $fileName = uniqid('logo_', true) . '.' . $file->getClientOriginalExtension();
+        $fileName = uniqid('size_measurement_', true) . '.' . $file->getClientOriginalExtension();
 
         // Delete the old file if it exists
         $this->deleteOldFile($data);
@@ -130,8 +135,8 @@ class BannerTextController extends Controller
     private function deleteOldFile($data)
     {
         // TODO: ensure from database
-        if (!empty($data->company_logo)) { # ensure from database
-            $oldFilePath = public_path($data->company_logo); // Use without prepending $filePath
+        if (!empty($data->img)) { # ensure from database
+            $oldFilePath = public_path($data->img); // Use without prepending $filePath
             if (file_exists($oldFilePath)) {
                 unlink($oldFilePath); // Delete the old file
                 return true;

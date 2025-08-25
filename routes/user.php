@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AllProductContentController;
 use App\Http\Controllers\BannerController;
 use App\Http\Controllers\BannerTextController;
 use App\Http\Controllers\ConversionController;
@@ -7,8 +8,12 @@ use App\Http\Controllers\ProductCharacteristicsController;
 use App\Http\Controllers\ProductCharacteristicsDetailsController;
 use App\Http\Controllers\ProductNarrativeController;
 use App\Http\Controllers\ProductNarrativeDetailsController;
+use App\Http\Controllers\SizeMeasurementController;
+use App\Http\Controllers\TakeALookImagesController;
+use App\Http\Controllers\TakeALookTitleController;
 use App\Http\Controllers\TimerController;
 use App\Http\Controllers\WhyChooseUsController;
+use App\Http\Controllers\WhyChooseUsTitleController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SliderController;
 use App\Http\Controllers\ExpenseController;
@@ -121,13 +126,33 @@ Route::group(['middleware' => 'prevent-back-history'],function(){
     Route::post('/purchase-status-update', [SettingController::class, 'userStatusUpdate']);
     Route::get('/view-purchase-history/{id}', [SettingController::class, 'viewPurchaseHistory'])->name('view-purchase-history');
 
-    // Why Choose Us
+    // Why Choose Us Content
     Route::get('/why-choose-us', [WhyChooseUsController::class, 'index'])->name('why_choose_us.index');
     Route::get('/why-choose-us/create', [WhyChooseUsController::class, 'create'])->name('why_choose_us.create');
     Route::post('/why-choose-us', [WhyChooseUsController::class, 'store'])->name('why_choose_us.store');
     Route::get('/why-choose-us/{id}/edit', [WhyChooseUsController::class, 'edit'])->name('why_choose_us.edit');
     Route::post('/why-choose-us/{whyChooseUs}', [WhyChooseUsController::class, 'update'])->name('why_choose_us.update');
     Route::post('/delete/why-choose-us/{whyChooseUs}', [WhyChooseUsController::class, 'destroy'])->name('why_choose_us.destroy');
+
+    // Why Choose Us Title
+    Route::get('/why-choose-us-title', [WhyChooseUsTitleController::class, 'index'])->name('why-choose-us-title');
+    Route::post('why-choose-us-title', [WhyChooseUsTitleController::class, 'store'])->name('why-choose-us-title.store');
+
+    // All Product Content
+    Route::get('/all-product-content', [AllProductContentController::class, 'index'])->name('all-product-content');
+    Route::post('all-product-content', [AllProductContentController::class, 'store'])->name('all-product-content.store');
+
+    // Take a Look
+    Route::get('/take-a-look-title', [TakeALookTitleController::class, 'index'])->name('take-a-look-title');
+    Route::post('take-a-look-title', [TakeALookTitleController::class, 'store'])->name('take-a-look-title.store');
+
+    // Take a Look Images
+    Route::get('/take-a-look-images', [TakeALookImagesController::class, 'index'])->name('take-a-look-images.index');
+    Route::get('/take-a-look-images/create', [TakeALookImagesController::class, 'create'])->name('take-a-look-images.create');
+    Route::post('/take-a-look-images', [TakeALookImagesController::class, 'store'])->name('take-a-look-images.store');
+    Route::get('/take-a-look-images/{id}/edit', [TakeALookImagesController::class, 'edit'])->name('take-a-look-images.edit');
+    Route::post('/take-a-look-images/{takeALookImage}', [TakeALookImagesController::class, 'update'])->name('take-a-look-images.update');
+    Route::post('/delete/take-a-look-images/{takeALookImage}', [TakeALookImagesController::class, 'destroy'])->name('take-a-look-images.destroy');
 
     // Banner
     Route::get('/banner', [BannerController::class, 'index'])->name('banner.index');
@@ -140,6 +165,10 @@ Route::group(['middleware' => 'prevent-back-history'],function(){
     // Banner Text
     Route::get('/banner-text', [BannerTextController::class, 'index'])->name('banner-text');
     Route::post('banner-text', [BannerTextController::class, 'store'])->name('banner-text.store');
+
+    // Size Measurement
+    Route::get('/size-measurement', [SizeMeasurementController::class, 'index'])->name('size-measurement');
+    Route::post('size-measurement', [SizeMeasurementController::class, 'store'])->name('size-measurement.store');
 
     // Timer
     Route::get('/timer', [TimerController::class, 'index'])->name('timer');

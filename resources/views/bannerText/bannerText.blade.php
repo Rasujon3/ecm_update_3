@@ -36,8 +36,40 @@
                             <div class="form-group">
                                 <label for="banner_text">Banner Text <span class="required">*</span></label>
                                 <input type="text" name="banner_text" class="form-control" id="banner_text"
-                                    placeholder="Banner Text"  value="{{old('banner_text', ($bannerText && $bannerText->banner_text) ? $bannerText->banner_text : "")}}">
+                                       placeholder="Banner Text"  value="{{old('banner_text', ($bannerText && $bannerText->banner_text) ? $bannerText->banner_text : "")}}">
                                 @error('banner_text')
+                                <span class="alert alert-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="description">Description </label>
+                                <textarea
+                                    class="form-control description"
+                                    name="description"
+                                >
+                                    {!! old('description', ($bannerText && $bannerText->description) ? $bannerText->description : "") !!}
+                                </textarea>
+                                @error('description')
+                                    <span class="alert alert-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="contents">Contents </label>
+                                <textarea
+                                    class="form-control description"
+                                    name="contents"
+                                >
+                                    {!! old('contents', ($bannerText && $bannerText->contents) ? $bannerText->contents : "") !!}
+                                </textarea>
+                                @error('contents')
                                     <span class="alert alert-danger">{{ $message }}</span>
                                 @enderror
                             </div>

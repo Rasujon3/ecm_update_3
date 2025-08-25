@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreReviewRequest extends FormRequest
+class SizeMeasurementRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,10 +24,7 @@ class StoreReviewRequest extends FormRequest
     public function rules()
     {
         return [
-            'title' => 'required|string|max:191',
-            'description' => 'nullable|string',
-            'status' => 'required|in:Active,Inactive',
-            'image' => 'required|file',
+            'img' => 'nullable|file|mimes:jpg,png,jpeg,gif,webp,tiff,bmp,svg,ico',
         ];
     }
 }
