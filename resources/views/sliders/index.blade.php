@@ -26,7 +26,10 @@
             </div>
             <!-- /.card-header -->
             <div class="card-body">
-                <a href="{{route('sliders.create')}}" class="btn btn-primary add-new mb-2">Add New Slider</a>
+                @if($canSliderAdd)
+                    <a href="{{route('sliders.create')}}" class="btn btn-primary add-new mb-2">Add New Slider</a>
+                @endif
+
                 <div class="fetch-data table-responsive">
                     <table id="slider-table" class="table table-bordered table-striped data-table">
                         <thead>
@@ -37,9 +40,9 @@
                                 <th>Action</th>
                             </tr>
                         </thead>
-                        <tbody class="conts"> 
+                        <tbody class="conts">
                         </tbody>
-                    </table> 
+                    </table>
                 </div>
             </div>
         </div>
@@ -48,7 +51,7 @@
 @endsection
 
 @push('scripts')
-  
+
   <script>
   	$(document).ready(function(){
   		let slider_id;
@@ -77,7 +80,7 @@
 
 	         slider_id = $(this).data('id');
 	         var isSliderchecked = $(this).prop('checked');
-	         var status_val = isSliderchecked ? 'Active' : 'Inactive'; 
+	         var status_val = isSliderchecked ? 'Active' : 'Inactive';
 	         $.ajax({
 
                 url: "{{url('/slider-status-update')}}",
@@ -92,9 +95,9 @@
                         $('.data-table').DataTable().ajax.reload(null, false);
 
                 },
-	                            
+
 	        });
-       }); 
+       });
 
 
        $(document).on('click', '.delete-slider', function(e){
@@ -118,7 +121,7 @@
                             $('.data-table').DataTable().ajax.reload(null, false);
 
                     },
-                                
+
               });
            }
 

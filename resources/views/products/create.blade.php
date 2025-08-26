@@ -11,7 +11,7 @@
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="{{URL::to('/dashboard')}}">Dashboard</a></li>
-                        <li class="breadcrumb-item"><a href="{{URL::to('/products')}}">All Slider
+                        <li class="breadcrumb-item"><a href="{{URL::to('/products')}}">All Product
                                 </a></li>
                         <li class="breadcrumb-item active">Add Product</li>
                     </ol>

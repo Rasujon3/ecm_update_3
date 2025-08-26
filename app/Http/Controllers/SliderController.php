@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Package;
 use App\Models\Slider;
+use App\Models\User;
+use Exception;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreSliderRequest;
 use App\Http\Requests\UpdateSliderRequest;
@@ -24,6 +27,20 @@ class SliderController extends Controller
     {
         try
         {
+            $canSliderAdd = false;
+            $userPackage = null;
+
+            $user = User::where('id', user()->id)->first();
+            if ($user && isset($user->package_id) && !empty($user->package_id)) {
+                $userPackage = Package::where('id', $user->package_id)->first();
+            }
+
+            if ($userPackage && isset($userPackage->is_slider) && !empty($userPackage->is_slider)) {
+                if ($userPackage->is_slider === 'Yes') {
+                    $canSliderAdd = true;
+                }
+            }
+
             if($request->ajax()){
 
                $sliders = Slider::where('user_id',user()->id)->select('*')->latest();
@@ -38,9 +55,9 @@ class SliderController extends Controller
                         ->addColumn('status', function($row){
                             return '<label class="switch"><input class="' . ($row->status == 'Active' ? 'active-slider' : 'decline-slider') . '" id="status-slider-update"  type="checkbox" ' . ($row->status == 'Active' ? 'checked' : '') . ' data-id="'.$row->id.'"><span class="slider round"></span></label>';
                         })
-                       
+
                         ->addColumn('action', function($row){
-                                                        
+
                            $btn = "";
                            $btn .= '&nbsp;';
                            $btn .= ' <a href="'.route('sliders.show',$row->id).'" class="btn btn-primary btn-sm action-button edit-slider" data-id="'.$row->id.'"><i class="fa fa-edit"></i></a>';
@@ -48,28 +65,46 @@ class SliderController extends Controller
                             $btn .= '&nbsp;';
 
 
-                            $btn .= ' <a href="#" class="btn btn-danger btn-sm delete-slider action-button" data-id="'.$row->id.'"><i class="fa fa-trash"></i></a>'; 
-        
-                          
-        
+                            $btn .= ' <a href="#" class="btn btn-danger btn-sm delete-slider action-button" data-id="'.$row->id.'"><i class="fa fa-trash"></i></a>';
+
+
+
                             return $btn;
                         })
                         ->rawColumns(['image','action','status'])
                         ->make(true);
             }
-            return view('sliders.index');
+            return view('sliders.index', compact('canSliderAdd'));
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
+        $canSliderAdd = false;
+        $userPackage = null;
+
+        $user = User::where('id', user()->id)->first();
+        if ($user && isset($user->package_id) && !empty($user->package_id)) {
+            $userPackage = Package::where('id', $user->package_id)->first();
+        }
+
+        if ($userPackage && isset($userPackage->is_slider) && !empty($userPackage->is_slider)) {
+            if ($userPackage->is_slider === 'Yes') {
+                $canSliderAdd = true;
+            }
+        }
+
+        if (!$canSliderAdd) {
+            $notification=array(
+                'messege' => 'This package is not allow slider add.',
+                'alert-type' => 'error',
+            );
+
+            return redirect()->route('sliders.index')->with($notification);
+        }
+
         return view('sliders.create');
     }
 
@@ -84,10 +119,10 @@ class SliderController extends Controller
         try
         {
             if($request->file('image'))
-            {   
+            {
                 $file = $request->file('image');
                 $name = time().user()->id.$file->getClientOriginalName();
-                $file->move(public_path().'/uploads/slider/', $name); 
+                $file->move(public_path().'/uploads/slider/', $name);
                 $path = 'uploads/slider/'.$name;
             }
             $slider = new Slider();
@@ -144,10 +179,10 @@ class SliderController extends Controller
         try
         {
             if($request->file('image'))
-            {   
+            {
                 $file = $request->file('image');
                 $name = time().user()->id.$file->getClientOriginalName();
-                $file->move(public_path().'/uploads/slider/', $name); 
+                $file->move(public_path().'/uploads/slider/', $name);
                 unlink(public_path($slider->image));
                 $path = 'uploads/slider/'.$name;
             }else{
@@ -180,7 +215,7 @@ class SliderController extends Controller
     public function destroy(Slider $slider)
     {
         try
-        {   
+        {
             unlink(public_path($slider->image));
             $slider->delete();
             return response()->json(['status'=>true, 'message'=>'Successfully the slider has been deleted']);
