@@ -77,7 +77,6 @@ class ReviewController extends Controller
             $review->user_id = user()->id;
             $review->domain_id = getDomain()->id;
             $review->title = $request->title;
-            $review->description = $request->description;
             $review->status = $request->status;
             $review->image = $path;
             $review->save();
@@ -127,7 +126,6 @@ class ReviewController extends Controller
             }
 
             $review->title = $request->title;
-            $review->description = $request->description;
             $review->status = $request->status;
             $review->image = $path;
             $review->update();

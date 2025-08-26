@@ -12,6 +12,7 @@ use App\Models\ProductCharacteristicsDetails;
 use App\Models\ProductCharacteristicsTitle;
 use App\Models\ProductNarrativeDetails;
 use App\Models\ProductNarrativeTitle;
+use App\Models\ReviewContent;
 use App\Models\SizeMeasurement;
 use App\Models\TakeALook;
 use App\Models\TakeALookImg;
@@ -286,9 +287,22 @@ class ApiController extends Controller
 	           $reviews = Review::where('domain_id',$domain->id)->where('status','Active')->latest()->get();
 	        }
 
+            $reviewContent = ReviewContent::where('domain_id',$domain->id)->first();
+            $title = '';
+            $description = '';
 
+            if ($reviewContent && isset($reviewContent->title, $reviewContent->description)) {
+                $title = $reviewContent->title;
+                $description = $reviewContent->description;
+            }
 
-	        return response()->json(['status'=>count($reviews)>0, 'total'=>count($reviews), 'data'=>$reviews]);
+	        return response()->json([
+                'status' => count($reviews)>0,
+                'total' => count($reviews),
+                'title' => $title,
+                'description' => $description,
+                'data' => $reviews
+            ]);
 
     	}catch(Exception $e){
     		return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);

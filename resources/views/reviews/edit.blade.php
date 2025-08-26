@@ -46,26 +46,11 @@
 
                         <div class="col-md-12">
                             <div class="form-group">
-                                <label for="description">Description </label>
-                                <textarea
-                                    class="form-control description"
-                                    name="description"
-                                >
-                                    {!! old('description', $review->description) !!}
-                                </textarea>
-                                @error('description')
-                                    <span class="alert alert-danger">{{ $message }}</span>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="col-md-12">
-                            <div class="form-group">
                                 <label for="status">Select Status <span class="required">*</span></label>
                                 <select class="form-control select2bs4" name="status" id="status" required="">
                                     <option value="" selected="" disabled="">Select Status</option>
-                                    <option value="Active" <?php if($review->status == 'Active'){echo "selected";} ?>>Active</option>
-                                    <option value="Inactive" <?php if($review->status == 'Inactive'){echo "selected";} ?>>Inactive</option>
+                                    <option value="Active" <?php if($review->status === 'Active'){echo "selected";} ?>>Active</option>
+                                    <option value="Inactive" <?php if($review->status === 'Inactive'){echo "selected";} ?>>Inactive</option>
                                 </select>
                                 @error('status')
                                 <span class="alert alert-danger">{{ $message }}</span>

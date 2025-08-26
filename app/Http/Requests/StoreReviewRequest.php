@@ -25,7 +25,6 @@ class StoreReviewRequest extends FormRequest
     {
         return [
             'title' => 'required|string|max:191',
-            'description' => 'nullable|string',
             'status' => 'required|in:Active,Inactive',
             'image' => 'required|file',
         ];

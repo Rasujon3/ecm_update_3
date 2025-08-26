@@ -126,6 +126,30 @@ class ProductController extends Controller
                return redirect()->back()->with($notification);
             }
 
+            $maxImgAllow = $package->max_img;
+            $imgCount = 0;
+
+            if(!$maxImgAllow || $maxImgAllow <= 0)
+            {
+                $notification=array(
+                    'messege' => 'This package is not allow for upload image.',
+                    'alert-type' => 'error',
+                );
+                return redirect()->back()->with($notification);
+            }
+
+            if($request->hasFile('gallery_images')) {
+                $imgCount = count($request->file('gallery_images'));
+            }
+
+            if ($imgCount > $maxImgAllow) {
+                $notification=array(
+                    'messege' => "Image upload limit exceeded. You attempted to upload {$imgCount} images, but your package only allows a maximum of {$maxImgAllow}.",
+                    'alert-type' => 'error',
+                );
+                return redirect()->back()->with($notification);
+            }
+
             $product = new Product();
             $product->user_id = user()->id;
             $product->domain_id = getDomain()->id;

@@ -90,6 +90,7 @@ class PackageController extends Controller
             $package->short_description = $request->short_description;
             $package->price = $request->price;
             $package->max_product = $request->max_product;
+            $package->max_img = $request->max_img;
             $package->sub_title = $request->sub_title;
             $package->demo_url = $request->demo_url;
             $package->img = $img_url;
@@ -147,6 +148,7 @@ class PackageController extends Controller
             $package->short_description = $request->short_description;
             $package->price = $request->price;
             $package->max_product = $request->max_product;
+            $package->max_img = $request->max_img;
             $package->sub_title = $request->sub_title;
             $package->demo_url = $request->demo_url;
             $package->img = $img_url;

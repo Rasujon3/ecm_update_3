@@ -8,6 +8,7 @@ use App\Http\Controllers\ProductCharacteristicsController;
 use App\Http\Controllers\ProductCharacteristicsDetailsController;
 use App\Http\Controllers\ProductNarrativeController;
 use App\Http\Controllers\ProductNarrativeDetailsController;
+use App\Http\Controllers\ReviewContentController;
 use App\Http\Controllers\SizeMeasurementController;
 use App\Http\Controllers\TakeALookImagesController;
 use App\Http\Controllers\TakeALookTitleController;
@@ -201,4 +202,8 @@ Route::group(['middleware' => 'prevent-back-history'],function(){
     Route::get('/product-narrative-details/{id}/edit', [ProductNarrativeDetailsController::class, 'edit'])->name('product_narrative_details.edit');
     Route::post('/product-narrative-details/{productNarrativeDetails}', [ProductNarrativeDetailsController::class, 'update'])->name('product_narrative_details.update');
     Route::post('/delete/product-narrative-details/{productNarrativeDetails}', [ProductNarrativeDetailsController::class, 'destroy'])->name('product_narrative_details.destroy');
+
+    // Review Content
+    Route::get('/review-content', [ReviewContentController::class, 'index'])->name('review-content');
+    Route::post('review-content', [ReviewContentController::class, 'store'])->name('review-content.store');
 });

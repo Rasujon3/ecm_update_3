@@ -28,15 +28,10 @@ class SliderController extends Controller
         try
         {
             $canSliderAdd = false;
-            $userPackage = null;
 
-            $user = User::where('id', user()->id)->first();
-            if ($user && isset($user->package_id) && !empty($user->package_id)) {
-                $userPackage = Package::where('id', $user->package_id)->first();
-            }
-
-            if ($userPackage && isset($userPackage->is_slider) && !empty($userPackage->is_slider)) {
-                if ($userPackage->is_slider === 'Yes') {
+            $package = Package::where('id',getDomain()->package_id)->first();
+            if ($package && !empty($package->is_slider)) {
+                if ($package->is_slider === 'Yes') {
                     $canSliderAdd = true;
                 }
             }
@@ -83,15 +78,10 @@ class SliderController extends Controller
     public function create()
     {
         $canSliderAdd = false;
-        $userPackage = null;
 
-        $user = User::where('id', user()->id)->first();
-        if ($user && isset($user->package_id) && !empty($user->package_id)) {
-            $userPackage = Package::where('id', $user->package_id)->first();
-        }
-
-        if ($userPackage && isset($userPackage->is_slider) && !empty($userPackage->is_slider)) {
-            if ($userPackage->is_slider === 'Yes') {
+        $package = Package::where('id',getDomain()->package_id)->first();
+        if ($package && !empty($package->is_slider)) {
+            if ($package->is_slider === 'Yes') {
                 $canSliderAdd = true;
             }
         }
@@ -107,17 +97,28 @@ class SliderController extends Controller
 
         return view('sliders.create');
     }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(StoreSliderRequest $request)
     {
         try
         {
+            $canSliderAdd = false;
+
+            $package = Package::where('id',getDomain()->package_id)->first();
+            if ($package && !empty($package->is_slider)) {
+                if ($package->is_slider === 'Yes') {
+                    $canSliderAdd = true;
+                }
+            }
+
+            if (!$canSliderAdd) {
+                $notification=array(
+                    'messege' => 'This package is not allow slider add.',
+                    'alert-type' => 'error',
+                );
+
+                return redirect()->route('sliders.index')->with($notification);
+            }
+
             if($request->file('image'))
             {
                 $file = $request->file('image');

@@ -140,6 +140,17 @@
                             </div>
                         </div>
 
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="max_img">Maximum Image Per Product Allowed <span class="required">*</span></label>
+                                <input type="number" name="max_img" class="form-control" id="max_img"
+                                       placeholder="Maximum Product Allowed" required="" value="{{old('max_img',$package->max_img)}}">
+                                @error('max_img')
+                                <span class="alert alert-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label for="short_description">Short Description <span class="required">*</span></label>

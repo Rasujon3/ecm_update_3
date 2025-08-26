@@ -603,6 +603,15 @@
             </ul>
           </li>
 
+               <li class="nav-item">
+                   <a href="{{ route('review-content') }}" class="nav-link">
+                       <i class="nav-icon fas fa-comments"></i>
+                       <p>
+                           Review Content
+                       </p>
+                   </a>
+               </li>
+
           <li class="nav-item">
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-star"></i>
