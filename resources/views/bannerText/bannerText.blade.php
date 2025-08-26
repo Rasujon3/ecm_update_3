@@ -35,10 +35,16 @@
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label for="banner_text">Banner Text <span class="required">*</span></label>
-                                <input type="text" name="banner_text" class="form-control" id="banner_text"
-                                       placeholder="Banner Text"  value="{{old('banner_text', ($bannerText && $bannerText->banner_text) ? $bannerText->banner_text : "")}}">
+                                <input
+                                    type="text"
+                                    name="banner_text"
+                                    class="form-control"
+                                    id="banner_text"
+                                    placeholder="Banner Text"
+                                    value="{{ old('banner_text', ($bannerText && $bannerText->banner_text) ? $bannerText->banner_text : "") }}"
+                                >
                                 @error('banner_text')
-                                <span class="alert alert-danger">{{ $message }}</span>
+                                    <span class="alert alert-danger">{{ $message }}</span>
                                 @enderror
                             </div>
                         </div>
@@ -48,12 +54,14 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="description">Description </label>
-                                <textarea
-                                    class="form-control description"
+                                <input
+                                    type="text"
                                     name="description"
+                                    class="form-control"
+                                    id="description"
+                                    placeholder="Description"
+                                    value="{{ old('description', ($bannerText && $bannerText->description) ? $bannerText->description : "") }}"
                                 >
-                                    {!! old('description', ($bannerText && $bannerText->description) ? $bannerText->description : "") !!}
-                                </textarea>
                                 @error('description')
                                     <span class="alert alert-danger">{{ $message }}</span>
                                 @enderror
@@ -63,12 +71,14 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="contents">Contents </label>
-                                <textarea
-                                    class="form-control description"
+                                <input
+                                    type="text"
                                     name="contents"
+                                    class="form-control"
+                                    id="contents"
+                                    placeholder="Contents"
+                                    value="{{ old('contents', ($bannerText && $bannerText->contents) ? $bannerText->contents : "") }}"
                                 >
-                                    {!! old('contents', ($bannerText && $bannerText->contents) ? $bannerText->contents : "") !!}
-                                </textarea>
                                 @error('contents')
                                     <span class="alert alert-danger">{{ $message }}</span>
                                 @enderror

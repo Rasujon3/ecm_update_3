@@ -6,7 +6,7 @@ use App\Http\Controllers\API\V1\ApiController;
 
 Route::middleware(['custom.cors', 'throttle:60,1'])->group(function () {
     Route::post('save-domain', [ApiController::class, 'saveDomain']);
-	Route::get('/packages', [ApiController::class, 'packages']);
+	Route::post('/packages', [ApiController::class, 'packages']);
 	Route::get('/domain-lists', [ApiController::class, 'domainLists']);
 	Route::post('domain-details', [ApiController::class, 'domainDetails']);
 	Route::post('search-domain', [ApiController::class, 'searchDomain']);

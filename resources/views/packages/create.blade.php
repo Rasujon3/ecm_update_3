@@ -28,7 +28,7 @@
             </div>
             <!-- /.card-header -->
             <!-- form start -->
-            <form action="{{route('packages.store')}}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('packages.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="card-body">
                     <div class="row">
@@ -96,6 +96,44 @@
                                 <input type="text" name="demo_url" class="form-control" id="demo_url"
                                        placeholder="Demo URL" value="{{old('demo_url')}}">
                                 @error('demo_url')
+                                    <span class="alert alert-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="is_slider">Can Slider Add? <span class="required">*</span></label>
+                                <select
+                                    class="form-control select2bs4"
+                                    name="is_slider"
+                                    id="is_slider"
+                                    required=""
+                                >
+                                    <option value="" selected="" disabled="">Select Status</option>
+                                    <option value="Yes">Yes</option>
+                                    <option value="No">No</option>
+                                </select>
+                                @error('is_slider')
+                                    <span class="alert alert-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="package_type">Package Type <span class="required">*</span></label>
+                                <select
+                                    class="form-control select2bs4"
+                                    name="package_type"
+                                    id="package_type"
+                                    required=""
+                                >
+                                    <option value="" selected="" disabled="">Select Type</option>
+                                    <option value="1">Type 1</option>
+                                    <option value="2">Type 2</option>
+                                </select>
+                                @error('package_type')
                                     <span class="alert alert-danger">{{ $message }}</span>
                                 @enderror
                             </div>

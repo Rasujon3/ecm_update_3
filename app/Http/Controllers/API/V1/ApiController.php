@@ -555,28 +555,47 @@ class ApiController extends Controller
 	    }
 	}
 
-	public function packages()
-	{
-	    try
-	    {
-	       $packages = Package::with(['services' => function ($query) {
+    public function packages(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'type' => 'nullable|string|in:1,2',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'The given data was invalid',
+                'data' => $validator->errors()
+            ], 422);
+        }
+        try
+        {
+            $type = $request->type;
+            $packages = Package::with(['services' => function ($query) {
                 $query->where('status', 'Active');
             }])
-            ->where('status', 'Active')
-            ->whereHas('services', function ($query) {
-                $query->where('status', 'Active');
-            })
-            ->latest()
-            ->get();
-	        return response()->json(['status'=>count($packages) > 0, 'data'=>$packages]);
-	    }catch(Exception $e) {
-	        return response()->json([
-	            'status' => false,
-	            'code' => $e->getCode(),
-	            'message' => $e->getMessage()
-	        ], 500);
-	    }
-	}
+                ->where('status', 'Active')
+                ->when($type, function ($query, $type) {
+                    $query->where('package_type', $type);
+                })
+                ->whereHas('services', function ($query) {
+                    $query->where('status', 'Active');
+                })
+                ->latest()
+                ->get();
+
+            return response()->json([
+                'status' => count($packages) > 0,
+                'data' => $packages
+            ]);
+        } catch(Exception $e) {
+            return response()->json([
+                'status' => false,
+                'code' => $e->getCode(),
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
 
 	public function privacyPolicy(Request $request)
 	{

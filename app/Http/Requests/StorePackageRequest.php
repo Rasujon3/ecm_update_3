@@ -31,6 +31,8 @@ class StorePackageRequest extends FormRequest
             'sub_title' => 'nullable|string|max:191',
             'demo_url' => 'nullable|string|url|max:191',
             'img' => 'nullable|file|image|mimes:jpeg,png,jpg,gif,svg',
+            'is_slider' => 'required|in:Yes,No',
+            'package_type' => 'required|in:1,2',
             'status' => 'required|in:Active,Inactive',
             'services' => 'required|array|min:1',
         ];

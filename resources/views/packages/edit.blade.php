@@ -102,6 +102,44 @@
                             </div>
                         </div>
 
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="is_slider">Can Slider Add? <span class="required">*</span></label>
+                                <select
+                                    class="form-control select2bs4"
+                                    name="is_slider"
+                                    id="is_slider"
+                                    required=""
+                                >
+                                    <option value="" selected="" disabled="">Select Status</option>
+                                    <option value="Yes" @if($package->is_slider === 'Yes') selected @endif >Yes</option>
+                                    <option value="No" @if($package->is_slider === 'No') selected @endif>No</option>
+                                </select>
+                                @error('is_slider')
+                                <span class="alert alert-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="package_type">Package Type <span class="required">*</span></label>
+                                <select
+                                    class="form-control select2bs4"
+                                    name="package_type"
+                                    id="package_type"
+                                    required=""
+                                >
+                                    <option value="" selected="" disabled="">Select Type</option>
+                                    <option value="1" @if($package->package_type === '1') selected @endif>Type 1</option>
+                                    <option value="2" @if($package->package_type === '2') selected @endif>Type 2</option>
+                                </select>
+                                @error('package_type')
+                                <span class="alert alert-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label for="short_description">Short Description <span class="required">*</span></label>

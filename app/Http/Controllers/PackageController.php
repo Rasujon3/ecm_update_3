@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Package;
+use Exception;
 use Illuminate\Http\Request;
 use App\Http\Requests\StorePackageRequest;
 use App\Http\Requests\UpdatePackageRequest;
@@ -72,13 +73,6 @@ class PackageController extends Controller
     {
         return view('packages.create');
     }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(StorePackageRequest $request)
     {
         // Handle file upload
@@ -99,6 +93,8 @@ class PackageController extends Controller
             $package->sub_title = $request->sub_title;
             $package->demo_url = $request->demo_url;
             $package->img = $img_url;
+            $package->is_slider = $request->is_slider;
+            $package->package_type = $request->package_type;
             $package->status = $request->status;
             $package->save();
             $package->services()->attach($request->services);
@@ -107,42 +103,34 @@ class PackageController extends Controller
                 'alert-type'=>'success',
             );
             DB::commit();
-            return redirect()->back()->with($notification);
-        }catch(Exception $e){
+            return redirect()->route('packages.index')->with($notification);
+        } catch(Exception $e) {
             DB::rollback();
-            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+            // Log the error
+            Log::error('Error in storing package: ', [
+                'message' => $e->getMessage(),
+                'code' => $e->getCode(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            $notification=array(
+                'messege' => 'Something went wrong!!!',
+                'alert-type' => 'error',
+            );
+
+            return redirect()->back()->with($notification);
+            # return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         }
     }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Package  $package
-     * @return \Illuminate\Http\Response
-     */
     public function show(Package $package)
     {
         return view('packages.edit',compact('package'));
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Package  $package
-     * @return \Illuminate\Http\Response
-     */
     public function edit(Package $package)
     {
         //
     }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Package  $package
-     * @return \Illuminate\Http\Response
-     */
     public function update(UpdatePackageRequest $request, Package $package)
     {
         // Handle file upload
@@ -162,6 +150,8 @@ class PackageController extends Controller
             $package->sub_title = $request->sub_title;
             $package->demo_url = $request->demo_url;
             $package->img = $img_url;
+            $package->is_slider = $request->is_slider;
+            $package->package_type = $request->package_type;
             $package->status = $request->status;
             $package->update();
             $package->services()->sync($request->services);
@@ -171,9 +161,23 @@ class PackageController extends Controller
             );
             DB::commit();
             return redirect('/packages')->with($notification);
-        }catch(Exception $e){
+        } catch(Exception $e) {
             DB::rollback();
-            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+            // Log the error
+            Log::error('Error in updating package: ', [
+                'message' => $e->getMessage(),
+                'code' => $e->getCode(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            $notification=array(
+                'messege' => 'Something went wrong!!!',
+                'alert-type' => 'error',
+            );
+
+            return redirect()->back()->with($notification);
+            # return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         }
     }
 
