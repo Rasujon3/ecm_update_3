@@ -65,7 +65,6 @@ class ApiController extends Controller
 	        ]);
 
 	        if ($validator->fails()) {
-	        	DB::commit();
 	            return response()->json([
 	                'status' => false,
 	                'message' => 'The given data was invalid',
@@ -79,7 +78,6 @@ class ApiController extends Controller
 
 	        if($checkDomain)
 	        {
-	        	DB::commit();
 	        	return response()->json(['status'=>false, 'domain_id'=>0, 'message'=>'The domain is not available'],400);
 	        }
 
@@ -129,8 +127,16 @@ class ApiController extends Controller
 	        $domain->status = 'Inactive';
 	        $domain->save();
 
+            $package = Package::where('id', $request->package_id)->first();
+
 	        DB::commit();
-	        return response()->json(['status'=>true, 'domain_id'=>intval($domain->id), 'user_id'=>intval($user->id), 'message'=>'Successfully a shop has been added']);
+	        return response()->json([
+                'status'=>true,
+                'domain_id'=>intval($domain->id),
+                'user_id'=>intval($user->id),
+                'package'=>$package,
+                'message'=>'Successfully a shop has been added'
+            ]);
 
     	}catch(Exception $e){
     		DB::rollback();
