@@ -1546,7 +1546,9 @@ class ApiController extends Controller
             $domain = domainDetails($request);
 
             $data = null;
-            if ($domain) {
+            if ($request->has('user_id')) {
+                $data = BannerText::where('user_id',$request->user_id)->first();
+            } else if ($domain && isset($domain->id)) {
                 $data = BannerText::where('domain_id',$domain?->id)->first();
             }
 

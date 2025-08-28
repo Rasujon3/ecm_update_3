@@ -318,6 +318,14 @@
                         </li>
                     </ul>
                 </li>
+        <li class="nav-item">
+            <a href="{{ route('banner-text') }}" class="nav-link">
+                <i class="nav-icon fas fa-text-height"></i>
+                <p>
+                    Banner Text
+                </p>
+            </a>
+        </li>
 
       @else
        @if(user()->role_id == 1)
