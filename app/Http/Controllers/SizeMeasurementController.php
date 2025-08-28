@@ -25,6 +25,7 @@ class SizeMeasurementController extends Controller
     }
     public function store(SizeMeasurementRequest $request)
     {
+//        dd($request->prev_img,!($request->hasFile('img')),$request->all());
         try
         {
             $data = SizeMeasurement::where('user_id', user()->id)->first();
@@ -34,13 +35,24 @@ class SizeMeasurementController extends Controller
             ];
 
             // Handle file upload
-            $img_url = $data ? $data->img : '';
+//            $img_url = $data ? $data->img : '';
+            $img_url = $request->prev_img;
+
+            // Case 1: New file uploaded
             if ($request->hasFile('img')) {
                 $filePath = $this->storeFile($request->file('img'));
+
+                // Delete the old file if it exists
+                $this->deleteOldFile($data);
+
                 $img_url = $filePath ?? '';
             }
-            // Delete the old file if it exists
-            $this->deleteOldFile($data);
+
+            // Case 2: User remove image
+            if (!$request->hasFile('img') && empty($request->prev_img)) {
+                $img_url = '';
+                $this->deleteOldFile($data);
+            }
 
             if ($data) {
                 SizeMeasurement::where('id', $data->id)->update(

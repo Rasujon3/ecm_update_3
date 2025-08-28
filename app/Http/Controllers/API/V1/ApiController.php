@@ -289,11 +289,12 @@ class ApiController extends Controller
 	        if($request->has('user_id'))
 	        {
 	            $reviews = Review::where('user_id',$request->user_id)->where('status','Active')->latest()->get();
-	        }else{
-	           $reviews = Review::where('domain_id',$domain->id)->where('status','Active')->latest()->get();
+                $reviewContent = ReviewContent::where('user_id', $request->user_id)->first();
+	        } else {
+	            $reviews = Review::where('domain_id',$domain->id)->where('status','Active')->latest()->get();
+                $reviewContent = ReviewContent::where('domain_id', $domain->id)->first();
 	        }
 
-            $reviewContent = ReviewContent::where('domain_id',$domain->id)->first();
             $title = '';
             $description = '';
 

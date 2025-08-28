@@ -2,9 +2,10 @@
 
 namespace App\Http\Requests;
 
+use App\Models\ModuleTutorial;
 use Illuminate\Foundation\Http\FormRequest;
 
-class TimerRequest extends FormRequest
+class ModuleTutorialRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,8 +24,16 @@ class TimerRequest extends FormRequest
      */
     public function rules()
     {
+        $route = $this->route('module_tutorial');
+        $id = $route?->id ?? null;
+
+        return ModuleTutorial::rules($id);
+    }
+
+    public function messages(): array
+    {
         return [
-            'time' => 'nullable|date|after_or_equal:now',
+            'module_id.unique' => 'The selected module already has a video URL.',
         ];
     }
 }

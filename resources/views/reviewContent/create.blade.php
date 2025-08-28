@@ -34,7 +34,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="title">Title <span class="required">*</span></label>
+                                <label for="title">Title </label>
                                 <input
                                     type="text"
                                     name="title"
@@ -50,7 +50,7 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="description">Description <span class="required">*</span></label>
+                                <label for="description">Description </label>
                                 <input
                                     type="text"
                                     name="description"

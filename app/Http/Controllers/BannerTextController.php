@@ -38,9 +38,12 @@ class BannerTextController extends Controller
                     [
                         'user_id' => user()->id,
 			            'domain_id' => getDomain()->id,
-                        'banner_text' => $request->banner_text ?? $defaults['banner_text'],
-                        'description' => $request->description ?? $defaults['description'],
-                        'contents' => $request->contents ?? $defaults['contents'],
+//                        'banner_text' => $request->banner_text ?? $defaults['banner_text'],
+//                        'description' => $request->description ?? $defaults['description'],
+//                        'contents' => $request->contents ?? $defaults['contents'],
+                        'banner_text' => $request->banner_text,
+                        'description' => $request->description,
+                        'contents' => $request->contents,
                     ]
                 );
             } else {
@@ -48,9 +51,12 @@ class BannerTextController extends Controller
                     [
                         'user_id' => user()->id,
 			            'domain_id' => getDomain()->id,
-                        'banner_text' => $request->banner_text ?? $defaults['banner_text'],
-                        'description' => $request->description ?? $defaults['description'],
-                        'contents' => $request->contents ?? $defaults['contents'],
+//                        'banner_text' => $request->banner_text ?? $defaults['banner_text'],
+//                        'description' => $request->description ?? $defaults['description'],
+//                        'contents' => $request->contents ?? $defaults['contents'],
+                        'banner_text' => $request->banner_text,
+                        'description' => $request->description,
+                        'contents' => $request->contents,
                     ]
                 );
             }

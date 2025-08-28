@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use Illuminate\Http\Request;
 use App\Models\Video;
+use Illuminate\Support\Facades\Log;
 
 class VideoController extends Controller
 {
@@ -27,8 +29,8 @@ class VideoController extends Controller
 			        'user_id' => user()->id,
 			        'domain_id' => getDomain()->id,
 			        'video_type' => 'Youtube',
-			        'video_url' => $request->video_url,
-			        'video_id' => getYouTubeVideoId($request),
+			        'video_url' => $request->video_url ?? '',
+			        'video_id' => $request->video_url ? getYouTubeVideoId($request) : '',
 			    ]
 			);
 
@@ -39,8 +41,19 @@ class VideoController extends Controller
 
             return redirect()->back()->with($notification);
 
-    	}catch(Exception $e){
-    		return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+    	} catch(Exception $e) {
+            Log::error('Error in storing store video: ', [
+                'message' => $e->getMessage(),
+                'code' => $e->getCode(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            $notification = [
+                'messege' => 'Something went wrong!!!',
+                'alert-type' => 'error'
+            ];
+            return redirect()->back()->with($notification);
     	}
     }
 

@@ -39,8 +39,10 @@ class AllProductContentController extends Controller
                     [
                         'user_id' => user()->id,
                         'domain_id' => getDomain()->id,
-                        'title' => $request->title ?? $defaults['title'],
-                        'description' => $request->description ?? $defaults['description'],
+//                        'title' => $request->title ?? $defaults['title'],
+//                        'description' => $request->description ?? $defaults['description'],
+                        'title' => $request->title ?? '',
+                        'description' => $request->description ?? '',
                     ]
                 );
             } else {
@@ -48,8 +50,10 @@ class AllProductContentController extends Controller
                     [
                         'user_id' => user()->id,
                         'domain_id' => getDomain()->id,
-                        'title' => $request->title ?? $defaults['title'],
-                        'description' => $request->description ?? $defaults['description'],
+//                        'title' => $request->title ?? $defaults['title'],
+//                        'description' => $request->description ?? $defaults['description'],
+                        'title' => $request->title ?? '',
+                        'description' => $request->description ?? '',
                     ]
                 );
             }

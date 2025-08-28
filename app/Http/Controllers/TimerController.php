@@ -36,8 +36,10 @@ class TimerController extends Controller
                     [
                         'user_id' => user()->id,
 			            'domain_id' => getDomain()->id,
-                        'title' => $request->title ?? $defaults['title'],
-                        'time' => Carbon::parse($request->time)->timestamp ?? $defaults['time'],
+//                        'title' => $request->title ?? $defaults['title'],
+//                        'time' => Carbon::parse($request->time)->timestamp ?? $defaults['time'],
+                        'title' => $request->title ?? '',
+                        'time' => $request->time ? Carbon::parse($request->time)->timestamp : null,
                     ]
                 );
             } else {
@@ -45,8 +47,10 @@ class TimerController extends Controller
                     [
                         'user_id' => user()->id,
 			            'domain_id' => getDomain()->id,
-                        'title' => $request->title ?? $defaults['title'],
-                        'time' => Carbon::parse($request->time)->timestamp ?? $defaults['time'],
+//                        'title' => $request->title ?? $defaults['title'],
+//                        'time' => Carbon::parse($request->time)->timestamp ?? $defaults['time'],
+                        'title' => $request->title ?? '',
+                        'time' => $request->time ? Carbon::parse($request->time)->timestamp : null,
                     ]
                 );
             }

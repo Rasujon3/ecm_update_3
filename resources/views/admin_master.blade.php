@@ -256,6 +256,22 @@
                   <p>All Review</p>
                 </a>
               </li>
+                <li class="nav-item">
+                    <a href="{{ route('review-content') }}" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Review Content</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a
+                        href="{{ route('module-video', 'Review') }}"
+                        class="nav-link"
+                        target="_blank"
+                    >
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Watch Tutorial</p>
+                    </a>
+                </li>
 
             </ul>
           </li>
@@ -269,14 +285,39 @@
             </a>
           </li>
 
-          <li class="nav-item">
-            <a href="{{ route('why_choose_us.index') }}" class="nav-link">
-              <i class="nav-icon fas fa-cog"></i>
-              <p>
-                Why Choose Us
-              </p>
-            </a>
-          </li>
+        <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-cog"></i>
+                        <p>
+                            Why Choose Us
+                            <i class="fas fa-angle-left right"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{ route('why-choose-us-title') }}" class="nav-link">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Title</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('why_choose_us.index') }}" class="nav-link">
+                                <i class="nav-icon far fa-circle"></i>
+                                <p>Content</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a
+                                href="{{ route('module-video', 'Why Choose Us') }}"
+                                class="nav-link"
+                                target="_blank"
+                            >
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Watch Tutorial</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
 
       @else
        @if(user()->role_id == 1)
@@ -381,6 +422,17 @@
                 </a>
               </li>
 
+                <li class="nav-item">
+                    <a
+                        href="{{ route('module-video', 'Slider') }}"
+                        class="nav-link"
+                        target="_blank"
+                    >
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Watch Tutorial</p>
+                    </a>
+                </li>
+
             </ul>
           </li>
 
@@ -419,14 +471,7 @@
                    </p>
                </a>
            </li>
-           <li class="nav-item">
-                   <a href="{{ route('all-product-content') }}" class="nav-link">
-                       <i class="nav-icon fas fa-clock"></i>
-                       <p>
-                           All Product Content
-                       </p>
-                   </a>
-               </li>
+
           <li class="nav-item">
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-th"></i>
@@ -473,6 +518,23 @@
                   <p>All Product</p>
                 </a>
               </li>
+              <li class="nav-item">
+                <a href="{{ route('all-product-content') }}" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>All Product Content</p>
+                </a>
+              </li>
+
+                <li class="nav-item">
+                    <a
+                        href="{{ route('module-video', 'Product') }}"
+                        class="nav-link"
+                        target="_blank"
+                    >
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Watch Tutorial</p>
+                    </a>
+                </li>
 
             </ul>
           </li>
@@ -548,6 +610,16 @@
                   <p>All Area</p>
                 </a>
               </li>
+                <li class="nav-item">
+                    <a
+                        href="{{ route('module-video', 'Delivery Charge Area') }}"
+                        class="nav-link"
+                        target="_blank"
+                    >
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Watch Tutorial</p>
+                    </a>
+                </li>
 
             </ul>
           </li>
@@ -573,6 +645,16 @@
                   <p>All Expense</p>
                 </a>
               </li>
+                <li class="nav-item">
+                    <a
+                        href="{{ route('module-video', 'Expense') }}"
+                        class="nav-link"
+                        target="_blank"
+                    >
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Watch Tutorial</p>
+                    </a>
+                </li>
 
             </ul>
           </li>
@@ -600,17 +682,19 @@
                 </a>
               </li>
 
+                <li class="nav-item">
+                    <a
+                        href="{{ route('module-video', 'Report') }}"
+                        class="nav-link"
+                        target="_blank"
+                    >
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Watch Tutorial</p>
+                    </a>
+                </li>
+
             </ul>
           </li>
-
-               <li class="nav-item">
-                   <a href="{{ route('review-content') }}" class="nav-link">
-                       <i class="nav-icon fas fa-comments"></i>
-                       <p>
-                           Review Content
-                       </p>
-                   </a>
-               </li>
 
           <li class="nav-item">
             <a href="#" class="nav-link">
@@ -634,6 +718,24 @@
                 </a>
               </li>
 
+              <li class="nav-item">
+                <a href="{{ route('review-content') }}" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Review Content</p>
+                </a>
+              </li>
+
+                <li class="nav-item">
+                    <a
+                        href="{{ route('module-video', 'Review') }}"
+                        class="nav-link"
+                        target="_blank"
+                    >
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Watch Tutorial</p>
+                    </a>
+                </li>
+
             </ul>
           </li>
 
@@ -648,14 +750,24 @@
                    <ul class="nav nav-treeview">
                        <li class="nav-item">
                            <a href="{{ route('take-a-look-title') }}" class="nav-link">
-                               <i class="far fa-text-width nav-icon"></i>
+                               <i class="far fa-circle nav-icon"></i>
                                <p>Title</p>
                            </a>
                        </li>
                        <li class="nav-item">
                            <a href="{{ route('take-a-look-images.index') }}" class="nav-link">
-                               <i class="nav-icon fas fa-desktop"></i>
+                               <i class="far fa-circle nav-icon"></i>
                                <p>Image</p>
+                           </a>
+                       </li>
+                       <li class="nav-item">
+                           <a
+                               href="{{ route('module-video', 'Take A Look') }}"
+                               class="nav-link"
+                               target="_blank"
+                           >
+                               <i class="far fa-circle nav-icon"></i>
+                               <p>Watch Tutorial</p>
                            </a>
                        </li>
                    </ul>
@@ -738,14 +850,24 @@
                    <ul class="nav nav-treeview">
                        <li class="nav-item">
                            <a href="{{ route('why-choose-us-title') }}" class="nav-link">
-                               <i class="far fa-text-width nav-icon"></i>
+                               <i class="far fa-circle nav-icon"></i>
                                <p>Title</p>
                            </a>
                        </li>
                        <li class="nav-item">
                            <a href="{{ route('why_choose_us.index') }}" class="nav-link">
-                               <i class="nav-icon fas fa-desktop"></i>
+                               <i class="nav-icon far fa-circle"></i>
                                <p>Content</p>
+                           </a>
+                       </li>
+                       <li class="nav-item">
+                           <a
+                               href="{{ route('module-video', 'Why Choose Us') }}"
+                               class="nav-link"
+                               target="_blank"
+                           >
+                               <i class="far fa-circle nav-icon"></i>
+                               <p>Watch Tutorial</p>
                            </a>
                        </li>
                    </ul>
@@ -829,6 +951,17 @@
                 </a>
               </li>
           @endif
+
+           @if(user()->role_id == 1)
+           <li class="nav-item">
+               <a href="{{ route('module-tutorials.index') }}" class="nav-link">
+                   <i class="nav-icon fas fa-cog"></i>
+                   <p>
+                       Tutorial
+                   </p>
+               </a>
+           </li>
+           @endif
 
           <li class="nav-item">
             <a href="{{url('/password-change')}}" class="nav-link">

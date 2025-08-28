@@ -40,9 +40,12 @@ class ConversionController extends Controller
                     [
                         'user_id' => user()->id,
 			            'domain_id' => getDomain()->id,
-                        'facebook' => $request->facebook ?? $defaults['facebook'],
-                        'whatsapp' => $request->whatsapp ?? $defaults['whatsapp'],
-                        'phone' => $request->phone ?? $defaults['phone'],
+//                        'facebook' => $request->facebook ?? $defaults['facebook'],
+//                        'whatsapp' => $request->whatsapp ?? $defaults['whatsapp'],
+//                        'phone' => $request->phone ?? $defaults['phone'],
+                        'facebook' => $request->facebook ?? '',
+                        'whatsapp' => $request->whatsapp ?? '',
+                        'phone' => $request->phone ?? '',
                     ]
                 );
             } else {
@@ -50,9 +53,12 @@ class ConversionController extends Controller
                     [
                         'user_id' => user()->id,
 			            'domain_id' => getDomain()->id,
-                        'facebook' => $request->facebook ?? $defaults['facebook'],
-                        'whatsapp' => $request->whatsapp ?? $defaults['whatsapp'],
-                        'phone' => $request->phone ?? $defaults['phone'],
+//                        'facebook' => $request->facebook ?? $defaults['facebook'],
+//                        'whatsapp' => $request->whatsapp ?? $defaults['whatsapp'],
+//                        'phone' => $request->phone ?? $defaults['phone'],
+                        'facebook' => $request->facebook ?? '',
+                        'whatsapp' => $request->whatsapp ?? '',
+                        'phone' => $request->phone ?? '',
                     ]
                 );
             }

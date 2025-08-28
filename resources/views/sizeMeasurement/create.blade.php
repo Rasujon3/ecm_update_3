@@ -34,12 +34,12 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
-                                <label for="img">Image <span class="required">*</span></label>
+                                <label for="img">Image </label>
+                                <input type="hidden" name="prev_img" value="{{ ($data && $data->img) ? $data->img : '' }}" >
                                 <input
                                     name="img"
                                     type="file"
                                     id="img"
-                                    required
                                     accept="image/*"
                                     class="dropify"
                                     data-height="150"
@@ -62,3 +62,12 @@
     </section>
 </div>
 @endsection
+
+@push('scripts')
+    <script>
+        $('.dropify').dropify().on('dropify.afterClear', function(event, element){
+            // Clear hidden field
+            $('input[name="prev_img"]').val('');
+        });
+    </script>
+@endpush

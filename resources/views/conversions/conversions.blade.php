@@ -34,9 +34,15 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="facebook">Messenger <span class="required">*</span></label>
-                                <input type="text" name="facebook" class="form-control" id="facebook"
-                                    placeholder="Facebook"  value="{{old('facebook', ($conversions && $conversions->facebook) ? $conversions->facebook : "")}}">
+                                <label for="facebook">Messenger </label>
+                                <input
+                                    type="text"
+                                    name="facebook"
+                                    class="form-control"
+                                    id="facebook"
+                                    placeholder="Facebook"
+                                    value="{{old('facebook', ($conversions && $conversions->facebook) ? $conversions->facebook : "")}}"
+                                >
                                 @error('facebook')
                                     <span class="alert alert-danger">{{ $message }}</span>
                                 @enderror
@@ -45,9 +51,14 @@
 
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="whatsapp">Whatsapp <span class="required">*</span></label>
-                                <input type="text" name="whatsapp" class="form-control" id="whatsapp"
-                                       placeholder="Whatsapp"  value="{{old('whatsapp', ($conversions && $conversions->whatsapp) ? $conversions->whatsapp : "")}}">
+                                <label for="whatsapp">Whatsapp </label>
+                                <input
+                                    type="text"
+                                    name="whatsapp"
+                                    class="form-control"
+                                    id="whatsapp"
+                                    placeholder="Whatsapp"
+                                    value="{{old('whatsapp', ($conversions && $conversions->whatsapp) ? $conversions->whatsapp : "")}}">
                                 @error('whatsapp')
                                 <span class="alert alert-danger">{{ $message }}</span>
                                 @enderror
@@ -58,9 +69,15 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="phone">Phone <span class="required">*</span></label>
-                                <input type="text" name="phone" class="form-control" id="phone"
-                                       placeholder="Phone"  value="{{old('phone', ($conversions && $conversions->phone) ? $conversions->phone : "")}}">
+                                <label for="phone">Phone </label>
+                                <input
+                                    type="text"
+                                    name="phone"
+                                    class="form-control"
+                                    id="phone"
+                                    placeholder="Phone"
+                                    value="{{old('phone', ($conversions && $conversions->phone) ? $conversions->phone : "")}}"
+                                >
                                 @error('phone')
                                 <span class="alert alert-danger">{{ $message }}</span>
                                 @enderror

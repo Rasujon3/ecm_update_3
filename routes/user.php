@@ -4,6 +4,7 @@ use App\Http\Controllers\AllProductContentController;
 use App\Http\Controllers\BannerController;
 use App\Http\Controllers\BannerTextController;
 use App\Http\Controllers\ConversionController;
+use App\Http\Controllers\ModuleTutorialController;
 use App\Http\Controllers\ProductCharacteristicsController;
 use App\Http\Controllers\ProductCharacteristicsDetailsController;
 use App\Http\Controllers\ProductNarrativeController;
@@ -206,4 +207,8 @@ Route::group(['middleware' => 'prevent-back-history'],function(){
     // Review Content
     Route::get('/review-content', [ReviewContentController::class, 'index'])->name('review-content');
     Route::post('review-content', [ReviewContentController::class, 'store'])->name('review-content.store');
+
+    // Module Tutorials
+    Route::resource('module-tutorials', ModuleTutorialController::class);
+    Route::get('/module-video/{moduleName}', [ModuleTutorialController::class, 'moduleVideo'])->name('module-video');
 });
