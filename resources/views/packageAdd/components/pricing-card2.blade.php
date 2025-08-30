@@ -50,7 +50,7 @@
 
             <!-- See Demo Button -->
             @if($plan->demo_url)
-                <a href="{{ $plan->demo_url }}" class="btn btn-success w-100 text-white" style="font-size: 1rem; padding: 10px; border-radius: 5px;">
+                <a href="{{ $plan->demo_url }}" target="_blank" class="btn btn-success w-100 text-white" style="font-size: 1rem; padding: 10px; border-radius: 5px;">
                     <i class="bi bi-eye me-2"></i> See Demo
                 </a>
             @endif
