@@ -22,6 +22,12 @@
     <!-- /.content-header -->
 
     <section class="content">
+        @if(!empty($url))
+            <button type="button" class="btn btn-success mb-3" id="watchTutorialBtn">
+                Watch Tutorial
+            </button>
+        @endif
+
         <div class="card card-success">
             <div class="card-header">
                 <h3 class="card-title">Banner Text</h3>
@@ -93,6 +99,39 @@
                     <!-- /.card-body -->
             </form>
         </div>
+            <!-- Hidden YouTube Video Section -->
+            <div id="tutorialVideoSection" class="mt-4" style="display:none;">
+                <h4>Tutorial Video</h4>
+                <div class="embed-responsive embed-responsive-16by9">
+                    <iframe
+                        id="tutorialIframe"
+                        class="embed-responsive-item"
+                        src=""
+                        allowfullscreen>
+                    </iframe>
+                </div>
+            </div>
     </section>
 </div>
 @endsection
+
+@push('scripts')
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const btn = document.getElementById("watchTutorialBtn");
+            const videoSection = document.getElementById("tutorialVideoSection");
+            const iframe = document.getElementById("tutorialIframe");
+
+            btn?.addEventListener("click", function () {
+                // Set YouTube embed URL
+                iframe.src = "{{ $url }}";
+
+                // Show section
+                videoSection.style.display = "block";
+
+                // Smooth scroll to video
+                videoSection.scrollIntoView({ behavior: "smooth" });
+            });
+        });
+    </script>
+@endpush

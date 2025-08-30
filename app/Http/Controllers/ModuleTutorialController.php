@@ -203,7 +203,7 @@ class ModuleTutorialController extends Controller
         if ($url) {
             return redirect()->away($url);
         }
-//        dd($moduleName, $tutorial, $url);
+
         $notification = [
             'messege' => 'Tutorial not found for this module.',
             'alert-type' => 'error'

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\AboutUs;
 use App\Models\BannerText;
 use App\Models\LoginPageContent;
+use App\Models\ModuleTutorial;
 use App\Models\Setting;
 use Exception;
 use Illuminate\Http\Request;
@@ -35,8 +36,34 @@ class BannerTextController extends Controller
             ->where('sub_domain_id', $subDomainId)
             ->first();
 
-        return view('bannerText.bannerText',compact('bannerText'));
+        $moduleName = 'Banner Text';
+        $url = null;
+        $tutorial = null;
+        if (!empty($moduleName)) {
+            $tutorial = ModuleTutorial::where('module_title', trim($moduleName))->first();
+        }
+        if($tutorial && !empty($tutorial->video_url)) {
+            $url = $this->getYoutubeEmbedUrl($tutorial->video_url);
+        }
+
+        return view('bannerText.bannerText',compact('bannerText', 'url'));
     }
+    function getYoutubeEmbedUrl($url)
+    {
+        $pattern_long = '/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=))([^"&?\/ ]{11})/';
+        $pattern_short = '/youtu\.be\/([^"&?\/ ]{11})/';
+
+        if (preg_match($pattern_long, $url, $matches)) {
+            $videoId = $matches[1];
+        } elseif (preg_match($pattern_short, $url, $matches)) {
+            $videoId = $matches[1];
+        } else {
+            return null; // Not a valid YouTube URL
+        }
+
+        return 'https://www.youtube.com/embed/' . $videoId;
+    }
+
     public function store(Request $request)
     {
         try
