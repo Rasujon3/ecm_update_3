@@ -7,12 +7,12 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0">module Tutorials Details</h1>
+                    <h1 class="m-0">Module Tutorials Details</h1>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="{{URL::to('/dashboard')}}">Dashboard</a></li>
-                        <li class="breadcrumb-item active">module Tutorials Details</li>
+                        <li class="breadcrumb-item active">Module Tutorials Details</li>
                     </ol>
                 </div><!-- /.col -->
             </div><!-- /.row -->
@@ -22,11 +22,11 @@
     <section class="content">
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">module Tutorials Details</h3>
+                <h3 class="card-title">Module Tutorials Details</h3>
             </div>
             <!-- /.card-header -->
             <div class="card-body">
-                <a href="{{route('module-tutorials.create')}}" class="btn btn-primary add-new mb-2">Add New module Tutorials Details</a>
+                <a href="{{route('module-tutorials.create')}}" class="btn btn-primary add-new mb-2">Add New Module Tutorials Details</a>
                 <div class="fetch-data table-responsive">
                     <table id="user-table" class="table table-bordered table-striped data-table">
                         <thead>

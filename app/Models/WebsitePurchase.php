@@ -16,6 +16,7 @@ class WebsitePurchase extends Model
         'gateway_order_id',
         'user_id',
         'package_id',
+        'sub_domain_id',
         'theme',
         'payment_method',
         'transaction_hash',

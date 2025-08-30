@@ -33,9 +33,9 @@ Route::get('/logout', [AccessController::class, 'Logout']);
 
 
 Route::group(['middleware' => 'prevent-back-history'],function(){
-  
+
   //admin dashboard
 
-    Route::get('/dashboard', [DashboardController::class, 'Dashboard']);
+    Route::get('/dashboard', [DashboardController::class, 'Dashboard'])->name('dashboard');
 
 });

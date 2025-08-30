@@ -5,6 +5,7 @@ use App\Http\Controllers\BannerController;
 use App\Http\Controllers\BannerTextController;
 use App\Http\Controllers\ConversionController;
 use App\Http\Controllers\ModuleTutorialController;
+use App\Http\Controllers\PackageAddController;
 use App\Http\Controllers\ProductCharacteristicsController;
 use App\Http\Controllers\ProductCharacteristicsDetailsController;
 use App\Http\Controllers\ProductNarrativeController;
@@ -211,4 +212,9 @@ Route::group(['middleware' => 'prevent-back-history'],function(){
     // Module Tutorials
     Route::resource('module-tutorials', ModuleTutorialController::class);
     Route::get('/module-video/{moduleName}', [ModuleTutorialController::class, 'moduleVideo'])->name('module-video');
+
+    // Package Add
+    Route::get('package-add', [PackageAddController::class, 'index'])->name('package-add');
+    Route::post('package-add', [PackageAddController::class, 'store'])->name('package-store');
+    Route::get('/payment/verify/{slug}/{package_id}/{status}', [PackageAddController::class, 'userPaymentStore'])->name('payment.verify');
 });

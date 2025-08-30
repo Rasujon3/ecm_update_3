@@ -52,11 +52,14 @@
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label for="description">Description </label>
-                                <textarea
-                                    class="form-control description"
-                                    name="description">
-                                    {!! old('description', ($data && $data->description) ? $data->description : "") !!}
-                                </textarea>
+                                <input
+                                    type="text"
+                                    name="description"
+                                    class="form-control"
+                                    id="description"
+                                    placeholder="Description"
+                                    value="{{old('title', ($data && $data->description) ? $data->description : "")}}"
+                                >
                                 @error('description')
                                 <span class="alert alert-danger">{{ $message }}</span>
                                 @enderror

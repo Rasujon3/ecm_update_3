@@ -66,6 +66,50 @@
       <li class="nav-item">
         <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
       </li>
+        <!-- Domain + SubDomains Dropdown -->
+        @if($domain)
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="domainDropdown" role="button"
+                   data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-globe"></i>
+                    {{ $domain->domain }}
+                </a>
+                <div class="dropdown-menu p-3" aria-labelledby="domainDropdown" style="min-width: 250px;">
+                    <div class="form-group mb-0">
+                        <label for="subdomainSelect" class="form-label">Select Subdomain</label>
+                        <select class="form-control select2bs4" id="subdomainSelect" name="subdomain_id">
+                            <option value="" disabled selected>Select Subdomain</option>
+                            @if(count($subDomains) > 0)
+                                @foreach($subDomains as $sub)
+                                    <option value="{{ $sub->id }}">
+                                        {{ $sub->subdomain }}
+                                    </option>
+                                @endforeach
+                            @else
+                                <option value="" disabled>No Subdomains</option>
+                            @endif
+                        </select>
+                    </div>
+                </div>
+            </li>
+        @endif
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="domainDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fas fa-globe"></i>
+                red-shop.com
+            </a>
+{{--            <div class="dropdown-menu p-3" aria-labelledby="domainDropdown" style="min-width: 250px;">--}}
+{{--                <div class="form-group mb-0">--}}
+                    <label for="subdomainSelect" class="form-label">Select Subdomain</label>
+                    <select class="form-control select2bs4" id="subdomainSelect" name="subdomain_id">
+                        <option value="" disabled selected>Select Subdomain</option>
+                        <option value="1">Subdomain 1</option>
+                        <option value="4">Subdomain 2</option>
+                    </select>
+{{--                </div>--}}
+{{--            </div>--}}
+        </li>
+
 
     </ul>
 
@@ -807,6 +851,15 @@
               </p>
             </a>
           </li>
+
+          <li class="nav-item">
+                   <a href="{{ route('package-add') }}" class="nav-link">
+                       <i class="nav-icon fas fa-plus"></i>
+                       <p>
+                           Purchase new loading page
+                       </p>
+                   </a>
+               </li>
         @endif
           <li class="nav-header">Settings</li>
 
