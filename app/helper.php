@@ -85,7 +85,7 @@
  function expenseTotal($row)
  {
  	$orderDate = $row->created_at->format('Y-m-d');
-    $totalExpense = Expense::where('date',$orderDate)->sum('amount'); 
+    $totalExpense = Expense::where('date',$orderDate)->sum('amount');
     return $totalExpense;
  }
 
@@ -93,7 +93,7 @@
  {
  	$orderDate = $row->created_at->format('Y-m-d');
  	$orderTotal = Orderdetail::whereDate('created_at',$orderDate)->where('status','!=','Pending')->sum('total');
-    $totalExpense = Expense::where('date',$orderDate)->sum('amount'); 
+    $totalExpense = Expense::where('date',$orderDate)->sum('amount');
     $total = $orderTotal - $totalExpense;
     return $total;
  }
@@ -117,3 +117,11 @@
  	    return $total;
  	}
  }
+
+function getCurrentSelection()
+{
+    return [
+        'domain_id' => Session::get('domain_id'),
+        'sub_domain_id' => Session::get('sub_domain_id')
+    ];
+}

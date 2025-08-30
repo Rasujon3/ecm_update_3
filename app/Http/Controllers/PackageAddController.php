@@ -144,7 +144,6 @@ class PackageAddController extends Controller
         try
         {
             if ($request->status === 'fail') {
-                DB::rollback();
                 $notification = [
                     'messege' => 'Payment failed, Please try again. status fail',
                     'alert-type' => 'error'
@@ -198,7 +197,7 @@ class PackageAddController extends Controller
 
             $result = json_decode($response,true);
 
-            $result[0]['bank_trx_id'] = 'CHU9WZHL7I';
+//            $result[0]['bank_trx_id'] = 'CHU9WZHL7I';
 
             if (!$result || !isset($result[0]) || empty($result[0]['bank_trx_id'])) {
                 DB::rollback();
@@ -237,7 +236,6 @@ class PackageAddController extends Controller
                 'status'           => $result[0]['bank_trx_id'] ? "pending" : "approved",
             ]);
 
-
             DB::commit();
 
             Session::forget('sp_order_id');
@@ -251,6 +249,7 @@ class PackageAddController extends Controller
             return redirect()->route('dashboard')->with($notification);
 
         } catch (\Exception $e) {
+            DB::rollback();
             // Log the error
             Log::error('userPaymentStore error: ', [
                 'message' => $e->getMessage(),
@@ -258,7 +257,6 @@ class PackageAddController extends Controller
                 'line' => $e->getLine(),
                 'trace' => $e->getTraceAsString()
             ]);
-            DB::rollback();
 
             $notification = [
                 'messege' => 'Something went wrong!!! userPaymentStore',
@@ -271,7 +269,7 @@ class PackageAddController extends Controller
     private function getCheckoutUrl($packageId, $slug)
     {
         try {
-            // টোকেন পাওয়া
+            // get token
             $tokenData = $this->getToken();
             $token = $tokenData['token'];
             $storeId = $tokenData['store_id'];
@@ -281,7 +279,7 @@ class PackageAddController extends Controller
 
             $packageData = Package::where('id', $packageId)->first();
 
-            // API বডি প্রস্তুত করা
+            // API body prepare
             $paymentData = [
                 'token' => $token,
                 'store_id' => $storeId,
@@ -299,13 +297,13 @@ class PackageAddController extends Controller
                 'client_ip' => request()?->ip(),
             ];
 
-            // API কলের জন্য হেডার প্রস্তুত করা
+            // API call header prepare
             $headers = [
                 'Authorization' => 'Bearer ' . $token,
                 'Content-Type' => 'application/json',
             ];
 
-            // secret-pay API কল
+            // secret-pay API call
             $response = Http::withHeaders($headers)->post($executeUrl, $paymentData);
 
             if ($response->successful()) {
@@ -320,7 +318,7 @@ class PackageAddController extends Controller
                 throw new \Exception('Failed to initiate payment: ' . ($response->json()['message'] ?? $response->status()));
             }
         } catch (\Exception $e) {
-            // এরর লগ করা
+            // Log error
             Log::error('ShurjoPay checkout error: ', [
                 'message' => $e->getMessage(),
                 'code' => $e->getCode(),
@@ -329,6 +327,23 @@ class PackageAddController extends Controller
             ]);
             throw $e;
         }
+    }
+
+    public function setSelection($type, $id, Request $request)
+    {
+        if ($type === 'domain') {
+            $domain = Domain::find($id);
+            Session::put('full_domain_name', $domain->domain);
+            Session::put('domain_id', $id);
+            Session::put('sub_domain_id', null);
+        } elseif ($type === 'subdomain') {
+            $subDomain = SubDomain::find($id);
+            Session::put('full_domain_name', $subDomain->full_domain);
+            Session::put('domain_id', null);
+            Session::put('sub_domain_id', $id);
+        }
+
+        return redirect()->back()->with('success', 'Selection updated successfully!');
     }
 
 }

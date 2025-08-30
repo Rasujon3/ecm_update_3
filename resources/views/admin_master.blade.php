@@ -47,6 +47,13 @@
 
     <link rel="stylesheet" href="{{asset('dropify/dist/css/dropify.min.css')}}">
 
+    <style>
+        .dropdown-item.active {
+            background-color: #007bff;
+            color: #fff;
+        }
+    </style>
+
 
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -66,51 +73,33 @@
       <li class="nav-item">
         <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
       </li>
-        <!-- Domain + SubDomains Dropdown -->
-        @if($domain)
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="domainDropdown" role="button"
-                   data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="fas fa-globe"></i>
-                    {{ $domain->domain }}
-                </a>
-                <div class="dropdown-menu p-3" aria-labelledby="domainDropdown" style="min-width: 250px;">
-                    <div class="form-group mb-0">
-                        <label for="subdomainSelect" class="form-label">Select Subdomain</label>
-                        <select class="form-control select2bs4" id="subdomainSelect" name="subdomain_id">
-                            <option value="" disabled selected>Select Subdomain</option>
-                            @if(count($subDomains) > 0)
-                                @foreach($subDomains as $sub)
-                                    <option value="{{ $sub->id }}">
-                                        {{ $sub->subdomain }}
-                                    </option>
-                                @endforeach
-                            @else
-                                <option value="" disabled>No Subdomains</option>
-                            @endif
-                        </select>
-                    </div>
-                </div>
-            </li>
-        @endif
         <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="domainDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <i class="fas fa-globe"></i>
-                red-shop.com
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                {{ Session::get('full_domain_name', 'No Domain') }}
             </a>
-{{--            <div class="dropdown-menu p-3" aria-labelledby="domainDropdown" style="min-width: 250px;">--}}
-{{--                <div class="form-group mb-0">--}}
-                    <label for="subdomainSelect" class="form-label">Select Subdomain</label>
-                    <select class="form-control select2bs4" id="subdomainSelect" name="subdomain_id">
-                        <option value="" disabled selected>Select Subdomain</option>
-                        <option value="1">Subdomain 1</option>
-                        <option value="4">Subdomain 2</option>
-                    </select>
-{{--                </div>--}}
-{{--            </div>--}}
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                @if(Session::get('domain'))
+                    {{-- Domains --}}
+                    <a class="dropdown-item {{ Session::get('domain_id') == Session::get('domain')->id ? 'active' : '' }}"
+                       href="{{ route('set.selection', ['type' => 'domain', 'id' => Session::get('domain')->id]) }}">
+                        {{ Session::get('domain')->domain }}
+                    </a>
+
+                    {{-- Subdomains --}}
+                    @if(count(Session::get('subDomains', [])) > 0)
+                        @foreach(Session::get('subDomains') as $sub)
+                            <a class="dropdown-item {{ Session::get('sub_domain_id') == $sub->id ? 'active' : '' }}"
+                               href="{{ route('set.selection', ['type' => 'subdomain', 'id' => $sub->id]) }}">
+                                {{ $sub->full_domain }}
+                            </a>
+                        @endforeach
+                    @endif
+                @else
+                    <span class="dropdown-item-text">No domains available</span>
+                @endif
+            </div>
         </li>
-
-
     </ul>
 
     <!-- Right navbar links -->
@@ -163,14 +152,14 @@
     <!-- Sidebar -->
     <div class="sidebar">
       <!-- Sidebar user panel (optional) -->
-      <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-        <div class="image">
-          <img src="{{URL::to(user()->image)}}" class="img-circle elevation-2" alt="User Image">
-        </div>
-        <div class="info">
-          <a href="#" class="d-block">{{Auth::user()->name}}</a>
-        </div>
-      </div>
+        {{--<div class="user-panel mt-3 pb-3 mb-3 d-flex">
+          <div class="image">
+            <img src="{{URL::to(user()->image)}}" class="img-circle elevation-2" alt="User Image">
+          </div>
+          <div class="info">
+            <a href="#" class="d-block">{{Auth::user()->name}}</a>
+          </div>
+        </div>--}}
 
       <!-- SidebarSearch Form -->
       <div class="form-inline">
@@ -1108,6 +1097,17 @@
 
 
 <script src="{{asset('custom/toastr.js')}}"></script>
+
+<script>
+    $(document).ready(function() {
+        $('#subdomainSelect').select2({
+            theme: 'bootstrap4',
+            placeholder: 'Select Subdomain',
+            allowClear: true
+        });
+    });
+</script>
+
 
   @if(Session::has('messege'))
     @toastr("{{ Session::get('messege') }}")

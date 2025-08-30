@@ -217,4 +217,7 @@ Route::group(['middleware' => 'prevent-back-history'],function(){
     Route::get('package-add', [PackageAddController::class, 'index'])->name('package-add');
     Route::post('package-add', [PackageAddController::class, 'store'])->name('package-store');
     Route::get('/payment/verify/{slug}/{package_id}/{status}', [PackageAddController::class, 'userPaymentStore'])->name('payment.verify');
+
+    Route::get('/set-selection/{type}/{id}', [PackageAddController::class, 'setSelection'])->name('set.selection');
+
 });

@@ -18,6 +18,12 @@ class BannerTextController extends Controller
     }
     public function index()
     {
+        $selection = getCurrentSelection();
+        $domainId = $selection['domain_id'];
+        $subDomainId = $selection['sub_domain_id'];
+
+//        dd($domainId, $subDomainId);
+
         $bannerText = BannerText::where('user_id', user()->id)->first();
         return view('bannerText.bannerText',compact('bannerText'));
     }

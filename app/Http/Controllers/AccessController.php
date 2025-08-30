@@ -50,11 +50,18 @@ class AccessController extends Controller
     public function Logout()
     {
     	try
-    	{  
+    	{
             $redirectRoute = user()->role_id == 1?'/':'/user/login';
             Session::put('redirectRoute',$redirectRoute);
     		Auth::logout();
             $getRoute = Session::get('redirectRoute');
+
+            Session::forget('domain');
+            Session::forget('subDomains');
+            Session::forget('full_domain_name');
+            Session::forget('domain_id');
+            Session::forget('sub_domain_id');
+
     		$notification=array(
                 'messege'=>'Successfully Logged Out',
                 'alert-type'=>'success'
@@ -62,12 +69,12 @@ class AccessController extends Controller
 
             return redirect($redirectRoute)->with($notification);
     	}catch(Exception $e){
-                  
+
                 $message = $e->getMessage();
-      
-                $code = $e->getCode();       
-      
-                $string = $e->__toString();       
+
+                $code = $e->getCode();
+
+                $string = $e->__toString();
                 return response()->json(['message'=>$message, 'execption_code'=>$code, 'execption_string'=>$string]);
                 exit;
         }
