@@ -7,12 +7,12 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0">Package Add</h1>
+                    <h1 class="m-0">Purchase new loading page</h1>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="{{URL::to('/dashboard')}}">Dashboard</a></li>
-                        <li class="breadcrumb-item active">Package Add</li>
+                        <li class="breadcrumb-item active">Purchase new loading page</li>
                     </ol>
                 </div><!-- /.col -->
             </div><!-- /.row -->
@@ -25,11 +25,25 @@
             <div class="card-body">
                 <form action="{{ route('package-store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
-                    <div class="col-md-6">
+                    <div class="col-md-12">
                         <div class="form-group">
                             <label for="slug">Sub Domain <span class="required">*</span></label>
-                            <input type="text" name="slug" class="form-control" id="slug"
-                                   placeholder="Ex: v2" required="" value="{{old('slug')}}">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        id="slug"
+                                        placeholder=""
+                                        disabled=""
+                                        value="{{$domain}}"
+                                    >
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="text" name="slug" class="form-control" id="slug"
+                                           placeholder="Ex: v2" required="" value="{{old('slug')}}">
+                                </div>
+                            </div>
                             @error('slug')
                             <span class="alert alert-danger">{{ $message }}</span>
                             @enderror

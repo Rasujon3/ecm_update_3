@@ -22,16 +22,41 @@ class BannerTextController extends Controller
         $domainId = $selection['domain_id'];
         $subDomainId = $selection['sub_domain_id'];
 
-//        dd($domainId, $subDomainId);
+        if ((!$domainId && !$subDomainId)) {
+            $notification=array(
+                'messege' => 'Domain & Subdomain mismatch.',
+                'alert-type' => 'error'
+            );
+            return redirect()->back()->with($notification);
+        }
 
-        $bannerText = BannerText::where('user_id', user()->id)->first();
+        $bannerText = BannerText::where('user_id', user()->id)
+            ->where('domain_id', $domainId)
+            ->where('sub_domain_id', $subDomainId)
+            ->first();
+
         return view('bannerText.bannerText',compact('bannerText'));
     }
     public function store(Request $request)
     {
         try
         {
-            $data = BannerText::where('user_id', user()->id)->first();
+            $selection = getCurrentSelection();
+            $domainId = $selection['domain_id'];
+            $subDomainId = $selection['sub_domain_id'];
+
+            if ((!$domainId && !$subDomainId)) {
+                $notification=array(
+                    'messege' => 'Domain & Subdomain mismatch.',
+                    'alert-type' => 'error'
+                );
+                return redirect()->back()->with($notification);
+            }
+
+            $data = BannerText::where('user_id', user()->id)
+                ->where('domain_id', $domainId)
+                ->where('sub_domain_id', $subDomainId)
+                ->first();
 
             $defaults = [
                 'banner_text' => $data ? $data->banner_text : null,
@@ -43,7 +68,8 @@ class BannerTextController extends Controller
                 BannerText::where('id', $data->id)->update(
                     [
                         'user_id' => user()->id,
-			            'domain_id' => getDomain()->id,
+			            'domain_id' => $domainId,
+			            'sub_domain_id' => $subDomainId,
 //                        'banner_text' => $request->banner_text ?? $defaults['banner_text'],
 //                        'description' => $request->description ?? $defaults['description'],
 //                        'contents' => $request->contents ?? $defaults['contents'],
@@ -56,7 +82,8 @@ class BannerTextController extends Controller
                 BannerText::create(
                     [
                         'user_id' => user()->id,
-			            'domain_id' => getDomain()->id,
+                        'domain_id' => $domainId,
+                        'sub_domain_id' => $subDomainId,
 //                        'banner_text' => $request->banner_text ?? $defaults['banner_text'],
 //                        'description' => $request->description ?? $defaults['description'],
 //                        'contents' => $request->contents ?? $defaults['contents'],

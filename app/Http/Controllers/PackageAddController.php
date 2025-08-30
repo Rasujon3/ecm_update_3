@@ -31,8 +31,9 @@ class PackageAddController extends Controller
         try
         {
             $plans = Package::where('status', 'Active')->get();
+            $domain = 'https://' . getDomain()->domain . '.hosstify.com/';
 
-            return view('packageAdd.index', compact('plans'));
+            return view('packageAdd.index', compact('plans', 'domain'));
         } catch(Exception $e) {
             return response()->json([
                 'status'=>false,

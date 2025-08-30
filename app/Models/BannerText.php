@@ -14,6 +14,7 @@ class BannerText extends Model
     protected $fillable = [
         'user_id',
         'domain_id',
+        'sub_domain_id',
         'banner_text',
         'description',
         'contents',
