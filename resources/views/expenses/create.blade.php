@@ -22,6 +22,11 @@
     <!-- /.content-header -->
 
     <section class="content">
+        @if(!empty($url))
+            <button type="button" class="btn btn-success mb-3" id="watchTutorialBtn">
+                Watch Tutorial
+            </button>
+        @endif
         <div class="card card-primary">
             <div class="card-header">
                 <h3 class="card-title">Add Expense</h3>
@@ -43,7 +48,7 @@
                                 @enderror
                             </div>
                         </div>
-                        
+
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label for="title">Title <span class="required">*</span></label>
@@ -53,9 +58,9 @@
                                 <span class="alert alert-danger">{{ $message }}</span>
                                 @enderror
                             </div>
-                        </div> 
+                        </div>
 
-                        
+
 
                         <div class="col-md-12">
                             <div class="form-group">
@@ -65,7 +70,7 @@
                                 @error('amount')
                                 <span class="alert alert-danger">{{ $message }}</span>
                                 @enderror
-                            </div> 
+                            </div>
                         </div>
 
                         <div class="col-md-12">
@@ -77,7 +82,7 @@
                                 @enderror
                             </div>
                         </div>
-                        
+
                         <div class="form-group w-100 px-2">
                             <button type="submit" class="btn btn-primary">Submit</button>
                         </div>
@@ -86,6 +91,28 @@
                 </div>
             </form>
         </div>
+            @include('components.youtubeVideoSection')
     </section>
 </div>
 @endsection
+
+@push('scripts')
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const btn = document.getElementById("watchTutorialBtn");
+            const videoSection = document.getElementById("tutorialVideoSection");
+            const iframe = document.getElementById("tutorialIframe");
+
+            btn?.addEventListener("click", function () {
+                // Set YouTube embed URL
+                iframe.src = "{{ $url }}";
+
+                // Show section
+                videoSection.style.display = "block";
+
+                // Smooth scroll to video
+                videoSection.scrollIntoView({ behavior: "smooth" });
+            });
+        });
+    </script>
+@endpush

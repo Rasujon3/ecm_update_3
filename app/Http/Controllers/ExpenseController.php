@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Expense;
+use Exception;
 use Illuminate\Http\Request;
 use App\Http\Requests\ExpenseRequest;
 use DataTables;
@@ -24,9 +25,26 @@ class ExpenseController extends Controller
     {
         try
         {
+            $selection = getCurrentSelection();
+            $domainId = $selection['domain_id'];
+            $subDomainId = $selection['sub_domain_id'];
+
+            if ((!$domainId && !$subDomainId)) {
+                $notification=array(
+                    'messege' => 'Domain & Subdomain mismatch.',
+                    'alert-type' => 'error'
+                );
+                return redirect()->route('units.index')->with($notification);
+            }
+
+            $url = getVideoUrl('Expense');
             if($request->ajax()){
 
-               $expenses = Expense::where('user_id',user()->id)->select('*')->latest();
+               $expenses = Expense::where('user_id',user()->id)
+                   ->where('domain_id', $domainId)
+                   ->where('sub_domain_id', $subDomainId)
+                   ->select('*')
+                   ->latest();
 
                     //date("d-m-Y", strtotime($originalDate));
 
@@ -34,13 +52,13 @@ class ExpenseController extends Controller
                         ->addIndexColumn()
 
                         ->addColumn('date', function($row){
-                            
-                            return date("d F Y", strtotime($row->date));                            
-                            
+
+                            return date("d F Y", strtotime($row->date));
+
                         })
-                       
+
                         ->addColumn('action', function($row){
-                                                        
+
                            $btn = "";
                            $btn .= '&nbsp;';
                            $btn .= ' <a href="'.route('expenses.show',$row->id).'" class="btn btn-primary btn-sm action-button edit-expense" data-id="'.$row->id.'"><i class="fa fa-edit"></i></a>';
@@ -48,10 +66,10 @@ class ExpenseController extends Controller
                             $btn .= '&nbsp;';
 
 
-                            $btn .= ' <a href="#" class="btn btn-danger btn-sm delete-expense action-button" data-id="'.$row->id.'"><i class="fa fa-trash"></i></a>'; 
-        
-                          
-        
+                            $btn .= ' <a href="#" class="btn btn-danger btn-sm delete-expense action-button" data-id="'.$row->id.'"><i class="fa fa-trash"></i></a>';
+
+
+
                             return $btn;
                         })->filter(function ($instance) use ($request) {
 
@@ -60,13 +78,13 @@ class ExpenseController extends Controller
                                     $search = $request->get('search');
                                     $w->orWhere('expenses.title', 'LIKE', "%$search%");
                                 });
-                            } 
+                            }
 
                             if ($request->get('from_date') != "") {
                                  $instance->where(function($w) use($request){
                                     $w->orWhere('expenses.date', '>=', $request->from_date);
                                 });
-                            } 
+                            }
 
                             if ($request->get('to_date') != "") {
                                  $instance->where(function($w) use($request){
@@ -74,15 +92,15 @@ class ExpenseController extends Controller
                                 });
                             }
 
-                                
+
                         })
                         ->rawColumns(['action','date'])
                         ->make(true);
             }
-            return view('expenses.index');
-        }catch(Exception $e){
+            return view('expenses.index', compact('url'));
+        } catch(Exception $e) {
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
-        }  
+        }
     }
 
     /**
@@ -92,21 +110,30 @@ class ExpenseController extends Controller
      */
     public function create()
     {
-        return view('expenses.create');
+        $url = getVideoUrl('Expense');
+        return view('expenses.create', compact('url'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(ExpenseRequest $request)
     {
         try
         {
+            $selection = getCurrentSelection();
+            $domainId = $selection['domain_id'];
+            $subDomainId = $selection['sub_domain_id'];
+
+            if ((!$domainId && !$subDomainId)) {
+                $notification=array(
+                    'messege' => 'Domain & Subdomain mismatch.',
+                    'alert-type' => 'error'
+                );
+                return redirect()->route('units.index')->with($notification);
+            }
+
             $expense = new Expense();
             $expense->user_id = user()->id;
+            $expense->domain_id = $domainId;
+            $expense->sub_domain_id = $subDomainId;
             $expense->title = $request->title;
             $expense->date = date('Y-m-d');
             $expense->amount = $request->amount;
@@ -129,7 +156,7 @@ class ExpenseController extends Controller
      * @param  \App\Models\Expense  $expense
      * @return \Illuminate\Http\Response
      */
-    public function show(Expense $expense) 
+    public function show(Expense $expense)
     {
         return view('expenses.edit', compact('expense'));
     }
@@ -154,8 +181,8 @@ class ExpenseController extends Controller
      */
     public function update(ExpenseRequest $request, Expense $expense)
     {
-        try 
-        {   
+        try
+        {
             $expense->title = $request->title;
             $expense->amount = $request->amount;
             $expense->remarks = $request->remarks;

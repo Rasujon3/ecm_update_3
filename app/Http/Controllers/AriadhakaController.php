@@ -26,12 +26,34 @@ class AriadhakaController extends Controller
 
     public function index(Request $request)
     {
-        $count = Ariadhaka::where('user_id',user()->id)->count();
         try
         {
+            $selection = getCurrentSelection();
+            $domainId = $selection['domain_id'];
+            $subDomainId = $selection['sub_domain_id'];
+
+            if ((!$domainId && !$subDomainId)) {
+                $notification=array(
+                    'messege' => 'Domain & Subdomain mismatch.',
+                    'alert-type' => 'error'
+                );
+                return redirect()->route('units.index')->with($notification);
+            }
+
+            $count = Ariadhaka::where('user_id',user()->id)
+                ->where('domain_id', $domainId)
+                ->where('sub_domain_id', $subDomainId)
+                ->count();
+
+            $url = getVideoUrl('Delivery');
+
             if($request->ajax()){
 
-               $ariadhakas = Ariadhaka::where('user_id',user()->id)->select('*')->latest();
+               $ariadhakas = Ariadhaka::where('user_id',user()->id)
+                   ->where('domain_id', $domainId)
+                   ->where('sub_domain_id', $subDomainId)
+                   ->select('*')
+                   ->latest();
 
                     return Datatables::of($ariadhakas)
                         ->addIndexColumn()
@@ -59,7 +81,7 @@ class AriadhakaController extends Controller
                         ->rawColumns(['action','status'])
                         ->make(true);
             }
-            return view('areas.index', compact('count'));
+            return view('areas.index', compact('count', 'url'));
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         }
@@ -73,7 +95,8 @@ class AriadhakaController extends Controller
     public function create()
     {
         $divisions = $this->getDivision();
-        return view('areas.create', compact('divisions'));
+        $url = getVideoUrl('Delivery');
+        return view('areas.create', compact('divisions', 'url'));
     }
 
     /**
@@ -84,7 +107,23 @@ class AriadhakaController extends Controller
      */
     public function store(StoreAreaRequest $request)
     {
-        $count = Ariadhaka::where('user_id',user()->id)->count();
+        $selection = getCurrentSelection();
+        $domainId = $selection['domain_id'];
+        $subDomainId = $selection['sub_domain_id'];
+
+        if ((!$domainId && !$subDomainId)) {
+            $notification=array(
+                'messege' => 'Domain & Subdomain mismatch.',
+                'alert-type' => 'error'
+            );
+            return redirect()->route('units.index')->with($notification);
+        }
+
+        $count = Ariadhaka::where('user_id',user()->id)
+            ->where('domain_id', $domainId)
+            ->where('sub_domain_id', $subDomainId)
+            ->count();
+
         if ($count > 0) {
             $notification=array(
                 'messege'=>'You can not add more than one area',
@@ -96,6 +135,8 @@ class AriadhakaController extends Controller
         {
             $area = new Ariadhaka();
             $area->user_id = user()->id;
+            $area->domain_id = $domainId;
+            $area->sub_domain_id = $subDomainId;
             $area->division = $request->division ?? '';
             $area->area_name = $request->area_name;
             # $area->area_type = $request->area_type;
@@ -109,7 +150,7 @@ class AriadhakaController extends Controller
                 'alert-type'=>'success',
             );
 
-            return redirect()->back()->with($notification);
+            return redirect()->route('ariadhakas.index')->with($notification);
         }catch(Exception $e){
             // Log the error
             Log::error('Error in storing area: ', [

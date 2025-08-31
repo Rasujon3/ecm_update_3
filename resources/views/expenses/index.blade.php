@@ -20,6 +20,12 @@
     </div>
     <!-- /.content-header -->
     <section class="content">
+        @if(!empty($url))
+            <button type="button" class="btn btn-success mb-3" id="watchTutorialBtn">
+                Watch Tutorial
+            </button>
+        @endif
+
         <div class="card">
             <div class="card-header">
                 <h3 class="card-title">All Expense</h3>
@@ -38,8 +44,8 @@
                           <label for="from_date">From Date</label>
                           <input type="date" class="form-control" id="from_date" required=""/>
                         </div>
-                        
-                      </div> 
+
+                      </div>
 
 
                       <div class="col-md-6">
@@ -47,15 +53,15 @@
                           <label for="to_date">To Date</label>
                           <input type="date" class="form-control" id="to_date" required=""/>
                         </div>
-                        
-                      </div> 
+
+                      </div>
 
 
                       <div class="col-md-12">
 
                         <button type="button" class="btn btn-primary btn-block filter-expense"><i class="fa fa-search"></i> SEARCH</button>
 
-                       
+
 
                      </div>
 
@@ -73,18 +79,19 @@
                                 <th>Action</th>
                             </tr>
                         </thead>
-                        <tbody class="conts"> 
+                        <tbody class="conts">
                         </tbody>
-                    </table> 
+                    </table>
                 </div>
             </div>
         </div>
+            @include('components.youtubeVideoSection')
     </section>
 </div>
 @endsection
 
 @push('scripts')
-  
+
   <script>
   	$(document).ready(function(){
   		let expense_id;
@@ -116,7 +123,7 @@
 
   		$('.filter-expense').click(function(e){
           e.preventDefault();
-          expenseTable.draw(); 
+          expenseTable.draw();
       });
 
        $(document).on('click', '.delete-expense', function(e){
@@ -140,13 +147,31 @@
                             $('.data-table').DataTable().ajax.reload(null, false);
 
                     },
-                                
+
               });
            }
 
        });
 
   	});
+  </script>
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          const btn = document.getElementById("watchTutorialBtn");
+          const videoSection = document.getElementById("tutorialVideoSection");
+          const iframe = document.getElementById("tutorialIframe");
+
+          btn?.addEventListener("click", function () {
+              // Set YouTube embed URL
+              iframe.src = "{{ $url }}";
+
+              // Show section
+              videoSection.style.display = "block";
+
+              // Smooth scroll to video
+              videoSection.scrollIntoView({ behavior: "smooth" });
+          });
+      });
   </script>
 
 @endpush

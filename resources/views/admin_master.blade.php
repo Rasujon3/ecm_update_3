@@ -73,7 +73,8 @@
       <li class="nav-item">
         <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
       </li>
-        <li class="nav-item dropdown">
+        @if(user()->role_id == 2)
+            <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 {{ Session::get('full_domain_name', 'No Domain') }}
@@ -100,6 +101,7 @@
                 @endif
             </div>
         </li>
+        @endif
     </ul>
 
     <!-- Right navbar links -->
