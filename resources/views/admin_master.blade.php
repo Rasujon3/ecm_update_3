@@ -759,6 +759,38 @@
                        </p>
                    </a>
                </li>
+               <li class="nav-item">
+                   <a href="{{url('/social-media-settings')}}" class="nav-link">
+                       <i class="nav-icon fas fa-globe"></i>
+                       <p>
+                           Social Media
+                       </p>
+                   </a>
+               </li>
+               <li class="nav-item">
+                   <a href="#" class="nav-link">
+                       <i class="nav-icon fas fa-key"></i>
+                       <p>
+                           Why Choose Us
+                           <i class="fas fa-angle-left right"></i>
+                       </p>
+                   </a>
+                   <ul class="nav nav-treeview">
+                       <li class="nav-item">
+                           <a href="{{ route('why-choose-us-title') }}" class="nav-link">
+                               <i class="far fa-circle nav-icon"></i>
+                               <p>Title</p>
+                           </a>
+                       </li>
+                       <li class="nav-item">
+                           <a href="{{ route('why_choose_us.index') }}" class="nav-link">
+                               <i class="nav-icon far fa-circle"></i>
+                               <p>Content</p>
+                           </a>
+                       </li>
+
+                   </ul>
+               </li>
         @endif
           <li class="nav-header">Settings</li>
 
@@ -798,32 +830,6 @@
               </p>
             </a>
           </li>
-
-          <li class="nav-item">
-                   <a href="#" class="nav-link">
-                       <i class="nav-icon fas fa-cog"></i>
-                       <p>
-                           Why Choose Us
-                           <i class="fas fa-angle-left right"></i>
-                       </p>
-                   </a>
-                   <ul class="nav nav-treeview">
-                       <li class="nav-item">
-                           <a href="{{ route('why-choose-us-title') }}" class="nav-link">
-                               <i class="far fa-circle nav-icon"></i>
-                               <p>Title</p>
-                           </a>
-                       </li>
-                       <li class="nav-item">
-                           <a href="{{ route('why_choose_us.index') }}" class="nav-link">
-                               <i class="nav-icon far fa-circle"></i>
-                               <p>Content</p>
-                           </a>
-                       </li>
-
-                   </ul>
-               </li>
-
           @endif
 
           @if(user()->role_id == 1)
@@ -835,22 +841,7 @@
               </p>
             </a>
           </li>
-
-
-
-
           @endif
-
-
-          <li class="nav-item">
-            <a href="{{url('/social-media-settings')}}" class="nav-link">
-              <i class="nav-icon fas fa-cog"></i>
-              <p>
-                Social Media Settings
-              </p>
-            </a>
-          </li>
-
 
           <li class="nav-item">
             <a href="{{url('/terms-conditions')}}" class="nav-link">

@@ -6,14 +6,14 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0">Social Media Settings</h1>
+                    <h1 class="m-0">Social Media</h1>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="{{URL::to('/dashboard')}}">Dashboard</a></li>
-                        <li class="breadcrumb-item"><a href="{{URL::to('/app-settings')}}">Social Media Settings
+                        <li class="breadcrumb-item"><a href="{{URL::to('/app-settings')}}">Social Media
                                 </a></li>
-                        <li class="breadcrumb-item active">Social Media Settings</li>
+                        <li class="breadcrumb-item active">Social Media</li>
                     </ol>
                 </div><!-- /.col -->
             </div><!-- /.row -->
@@ -22,9 +22,15 @@
     <!-- /.content-header -->
 
     <section class="content">
+        @if(!empty($url))
+            <button type="button" class="btn btn-success mb-3" id="watchTutorialBtn">
+                Watch Tutorial
+            </button>
+        @endif
+
         <div class="card card-success">
             <div class="card-header">
-                <h3 class="card-title">Social Media Settings</h3>
+                <h3 class="card-title">Social Media</h3>
             </div>
             <!-- /.card-header -->
             <!-- form start -->
@@ -40,7 +46,7 @@
                                 @error('facebook_url')
                                 <span class="alert alert-danger">{{ $message }}</span>
                                 @enderror
-                            </div> 
+                            </div>
                         </div>
 
                         <div class="col-md-12">
@@ -51,10 +57,10 @@
                                 @error('twitter_url')
                                 <span class="alert alert-danger">{{ $message }}</span>
                                 @enderror
-                            </div> 
+                            </div>
                         </div>
 
-                        
+
                          <div class="col-md-12">
                             <div class="form-group">
                                 <label for="instagram_url">Instragram <span class="required">*</span></label>
@@ -63,7 +69,7 @@
                                 @error('instagram_url')
                                 <span class="alert alert-danger">{{ $message }}</span>
                                 @enderror
-                            </div> 
+                            </div>
                         </div>
 
                         <div class="col-md-12">
@@ -74,9 +80,9 @@
                                 @error('youtube_url')
                                 <span class="alert alert-danger">{{ $message }}</span>
                                 @enderror
-                            </div> 
+                            </div>
                         </div>
-                        
+
                         <div class="form-group w-100 px-2">
                             <button type="submit" class="btn btn-success">Save Changes</button>
                         </div>
@@ -85,6 +91,28 @@
                 </div>
             </form>
         </div>
+            @include('components.youtubeVideoSection')
     </section>
 </div>
 @endsection
+
+@push('scripts')
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const btn = document.getElementById("watchTutorialBtn");
+            const videoSection = document.getElementById("tutorialVideoSection");
+            const iframe = document.getElementById("tutorialIframe");
+
+            btn?.addEventListener("click", function () {
+                // Set YouTube embed URL
+                iframe.src = "{{ $url }}";
+
+                // Show section
+                videoSection.style.display = "block";
+
+                // Smooth scroll to video
+                videoSection.scrollIntoView({ behavior: "smooth" });
+            });
+        });
+    </script>
+@endpush
