@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\ModuleTutorial;
+use App\Models\SubDomain;
 use App\Models\User;
  use App\Models\Domain;
  use App\Models\Unit;
@@ -155,4 +156,18 @@ function getYoutubeEmbedUrl($url)
     }
 
     return 'https://www.youtube.com/embed/' . $videoId;
+}
+
+function getPackage($domainId, $subDomainId)
+{
+    $packageId = null;
+
+    if ($domainId) {
+        $packageId = Domain::where('id',$domainId)->first();
+    }
+
+    if (!$domainId && $subDomainId) {
+        $packageId = SubDomain::where('id', $subDomainId)->first();
+    }
+    return $packageId;
 }

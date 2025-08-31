@@ -20,14 +20,47 @@ class AllProductContentController extends Controller
     }
     public function index()
     {
-        $data = AllProductContent::where('user_id', user()->id)->first();
-        return view('allProductContent.create',compact('data'));
+        $selection = getCurrentSelection();
+        $domainId = $selection['domain_id'];
+        $subDomainId = $selection['sub_domain_id'];
+
+        if ((!$domainId && !$subDomainId)) {
+            $notification=array(
+                'messege' => 'Domain & Subdomain mismatch.',
+                'alert-type' => 'error'
+            );
+            return redirect()->route('dashboard')->with($notification);
+        }
+
+        $url = getVideoUrl('Product');
+
+        $data = AllProductContent::where('user_id', user()->id)
+            ->where('domain_id', $domainId)
+            ->where('sub_domain_id', $subDomainId)
+            ->first();
+
+        return view('allProductContent.create',compact('data', 'url'));
     }
     public function store(Request $request)
     {
         try
         {
-            $data = AllProductContent::where('user_id', user()->id)->first();
+            $selection = getCurrentSelection();
+            $domainId = $selection['domain_id'];
+            $subDomainId = $selection['sub_domain_id'];
+
+            if ((!$domainId && !$subDomainId)) {
+                $notification=array(
+                    'messege' => 'Domain & Subdomain mismatch.',
+                    'alert-type' => 'error'
+                );
+                return redirect()->route('dashboard')->with($notification);
+            }
+
+            $data = AllProductContent::where('user_id', user()->id)
+                ->where('domain_id', $domainId)
+                ->where('sub_domain_id', $subDomainId)
+                ->first();
 
             $defaults = [
                 'title' => $data ? $data->title : null,
@@ -38,7 +71,8 @@ class AllProductContentController extends Controller
                 AllProductContent::where('id', $data->id)->update(
                     [
                         'user_id' => user()->id,
-                        'domain_id' => getDomain()->id,
+                        'domain_id' => $domainId,
+                        'sub_domain_id' => $subDomainId,
 //                        'title' => $request->title ?? $defaults['title'],
 //                        'description' => $request->description ?? $defaults['description'],
                         'title' => $request->title ?? '',
@@ -49,7 +83,8 @@ class AllProductContentController extends Controller
                 AllProductContent::create(
                     [
                         'user_id' => user()->id,
-                        'domain_id' => getDomain()->id,
+                        'domain_id' => $domainId,
+                        'sub_domain_id' => $subDomainId,
 //                        'title' => $request->title ?? $defaults['title'],
 //                        'description' => $request->description ?? $defaults['description'],
                         'title' => $request->title ?? '',

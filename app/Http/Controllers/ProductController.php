@@ -32,9 +32,26 @@ class ProductController extends Controller
     {
         try
         {
+            $url = getVideoUrl('Product');
+
+            $selection = getCurrentSelection();
+            $domainId = $selection['domain_id'];
+            $subDomainId = $selection['sub_domain_id'];
+
+            if ((!$domainId && !$subDomainId)) {
+                $notification=array(
+                    'messege' => 'Domain & Subdomain mismatch.',
+                    'alert-type' => 'error'
+                );
+                return redirect()->back()->with($notification);
+            }
             if($request->ajax()){
 
-               $products = Product::where('user_id',user()->id)->select('*')->latest();
+               $products = Product::where('user_id',user()->id)
+                   ->where('domain_id', $domainId)
+                   ->where('sub_domain_id', $subDomainId)
+                   ->select('*')
+                   ->latest();
 
                     return Datatables::of($products)
                         ->addIndexColumn()
@@ -79,7 +96,7 @@ class ProductController extends Controller
             $userInfo = User::with('domain', 'package')
                 ->where('id',Auth::user()->id)
                 ->firstOrFail();
-            return view('products.index', compact('userInfo'));
+            return view('products.index', compact('userInfo', 'url'));
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         }
@@ -99,8 +116,23 @@ class ProductController extends Controller
         DB::beginTransaction();
         try
         {
+            $selection = getCurrentSelection();
+            $domainId = $selection['domain_id'];
+            $subDomainId = $selection['sub_domain_id'];
+
+            if ((!$domainId && !$subDomainId)) {
+                $notification=array(
+                    'messege' => 'Domain & Subdomain mismatch.',
+                    'alert-type' => 'error'
+                );
+                return redirect()->back()->with($notification);
+            }
+
             $user = User::where('id',user()->id)->first();
-            $count = Product::where('user_id',user()->id)->count();
+            $count = Product::where('user_id',user()->id)
+                ->where('domain_id', $domainId)
+                ->where('sub_domain_id', $subDomainId)
+                ->count();
             if ($user->products_add_status === 1 || $count >= 5) {
                 $notification = array(
                     'messege'=>'You can not add more than 5 products',
@@ -108,7 +140,17 @@ class ProductController extends Controller
                 );
                 return redirect()->route('products.index')->with($notification);
             }
-            $package = Package::where('id',getDomain()->package_id)->first();
+
+            $packageId = getPackage($domainId, $subDomainId);
+            if (!$packageId || empty($packageId->package_id)) {
+                $notification=array(
+                    'messege' => 'Package not found.',
+                    'alert-type' => 'error'
+                );
+                return redirect()->back()->with($notification);
+            }
+
+            $package = Package::where('id',$packageId->package_id)->first();
             if(!$package)
             {
                 $notification=array(
@@ -152,7 +194,8 @@ class ProductController extends Controller
 
             $product = new Product();
             $product->user_id = user()->id;
-            $product->domain_id = getDomain()->id;
+            $product->domain_id = $domainId;
+            $product->sub_domain_id = $subDomainId;
             $product->unit_id = $request->unit_id;
             $product->product_name = $request->product_name;
             $product->product_price = $request->product_price;

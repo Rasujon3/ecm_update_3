@@ -20,6 +20,12 @@
     </div>
     <!-- /.content-header -->
     <section class="content">
+        @if(!empty($url))
+            <button type="button" class="btn btn-success mb-3" id="watchTutorialBtn">
+                Watch Tutorial
+            </button>
+        @endif
+
         <div class="card">
             <div class="card-header">
                 <h3 class="card-title">All Product</h3>
@@ -63,11 +69,30 @@
                 </div>
             </div>
         </div>
+            @include('components.youtubeVideoSection')
     </section>
 </div>
 @endsection
 
 @push('scripts')
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const btn = document.getElementById("watchTutorialBtn");
+            const videoSection = document.getElementById("tutorialVideoSection");
+            const iframe = document.getElementById("tutorialIframe");
+
+            btn?.addEventListener("click", function () {
+                // Set YouTube embed URL
+                iframe.src = "{{ $url }}";
+
+                // Show section
+                videoSection.style.display = "block";
+
+                // Smooth scroll to video
+                videoSection.scrollIntoView({ behavior: "smooth" });
+            });
+        });
+    </script>
 
   <script>
   	$(document).ready(function(){
