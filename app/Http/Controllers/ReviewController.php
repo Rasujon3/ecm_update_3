@@ -20,9 +20,26 @@ class ReviewController extends Controller
     {
         try
         {
+            $selection = getCurrentSelection();
+            $domainId = $selection['domain_id'];
+            $subDomainId = $selection['sub_domain_id'];
+
+            if ((!$domainId && !$subDomainId)) {
+                $notification=array(
+                    'messege' => 'Domain & Subdomain mismatch.',
+                    'alert-type' => 'error'
+                );
+                return redirect()->route('units.index')->with($notification);
+            }
+
+            $url = getVideoUrl('Review');
             if($request->ajax()){
 
-               $reviews = Review::where('user_id',user()->id)->select('*')->latest();
+               $reviews = Review::where('user_id',user()->id)
+                   ->where('domain_id', $domainId)
+                   ->where('sub_domain_id', $subDomainId)
+                   ->select('*')
+                   ->latest();
 
                     return Datatables::of($reviews)
                         ->addIndexColumn()
@@ -53,19 +70,32 @@ class ReviewController extends Controller
                         ->rawColumns(['action','status','image'])
                         ->make(true);
             }
-            return view('reviews.index');
+            return view('reviews.index', compact('url'));
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         }
     }
     public function create()
     {
-        return view('reviews.create');
+        $url = getVideoUrl('Review');
+        return view('reviews.create', compact('url'));
     }
     public function store(StoreReviewRequest $request)
     {
         try
         {
+            $selection = getCurrentSelection();
+            $domainId = $selection['domain_id'];
+            $subDomainId = $selection['sub_domain_id'];
+
+            if ((!$domainId && !$subDomainId)) {
+                $notification=array(
+                    'messege' => 'Domain & Subdomain mismatch.',
+                    'alert-type' => 'error'
+                );
+                return redirect()->route('units.index')->with($notification);
+            }
+
             if($request->file('image'))
             {
                 $file = $request->file('image');
@@ -75,7 +105,8 @@ class ReviewController extends Controller
             }
             $review = new Review();
             $review->user_id = user()->id;
-            $review->domain_id = getDomain()->id;
+            $review->domain_id = $domainId;
+            $review->sub_domain_id = $subDomainId;
             $review->title = $request->title;
             $review->status = $request->status;
             $review->image = $path;
