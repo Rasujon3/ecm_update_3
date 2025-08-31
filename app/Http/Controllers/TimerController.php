@@ -44,6 +44,7 @@ class TimerController extends Controller
             ->where('domain_id', $domainId)
             ->where('sub_domain_id', $subDomainId)
             ->first();
+
         return view('timer.timer',compact('data', 'url'));
     }
     function getYoutubeEmbedUrl($url)

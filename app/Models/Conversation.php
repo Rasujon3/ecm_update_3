@@ -14,6 +14,7 @@ class Conversation extends Model
     protected $fillable = [
         'user_id',
         'domain_id',
+        'sub_domain_id',
         'facebook',
         'whatsapp',
         'phone',

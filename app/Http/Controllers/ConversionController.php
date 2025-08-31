@@ -7,6 +7,7 @@ use App\Models\AboutUs;
 use App\Models\BannerText;
 use App\Models\Conversation;
 use App\Models\LoginPageContent;
+use App\Models\ModuleTutorial;
 use App\Models\Setting;
 use Exception;
 use Illuminate\Http\Request;
@@ -20,14 +21,69 @@ class ConversionController extends Controller
     }
     public function index()
     {
-        $conversions = Conversation::where('user_id', user()->id)->first();
-        return view('conversions.conversions',compact('conversions'));
+        $selection = getCurrentSelection();
+        $domainId = $selection['domain_id'];
+        $subDomainId = $selection['sub_domain_id'];
+
+        if ((!$domainId && !$subDomainId)) {
+            $notification=array(
+                'messege' => 'Domain & Subdomain mismatch.',
+                'alert-type' => 'error'
+            );
+            return redirect()->back()->with($notification);
+        }
+        $conversions = Conversation::where('user_id', user()->id)
+            ->where('domain_id', $domainId)
+            ->where('sub_domain_id', $subDomainId)
+            ->first();
+
+        $moduleName = 'Banner Text';
+        $url = null;
+        $tutorial = null;
+        if (!empty($moduleName)) {
+            $tutorial = ModuleTutorial::where('module_title', trim($moduleName))->first();
+        }
+        if($tutorial && !empty($tutorial->video_url)) {
+            $url = $this->getYoutubeEmbedUrl($tutorial->video_url);
+        }
+
+        return view('conversions.conversions',compact('conversions', 'url'));
+    }
+    function getYoutubeEmbedUrl($url)
+    {
+        $pattern_long = '/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=))([^"&?\/ ]{11})/';
+        $pattern_short = '/youtu\.be\/([^"&?\/ ]{11})/';
+
+        if (preg_match($pattern_long, $url, $matches)) {
+            $videoId = $matches[1];
+        } elseif (preg_match($pattern_short, $url, $matches)) {
+            $videoId = $matches[1];
+        } else {
+            return null; // Not a valid YouTube URL
+        }
+
+        return 'https://www.youtube.com/embed/' . $videoId;
     }
     public function store(ConversationsRequest $request)
     {
         try
         {
-            $data = Conversation::where('user_id', user()->id)->first();
+            $selection = getCurrentSelection();
+            $domainId = $selection['domain_id'];
+            $subDomainId = $selection['sub_domain_id'];
+
+            if ((!$domainId && !$subDomainId)) {
+                $notification=array(
+                    'messege' => 'Domain & Subdomain mismatch.',
+                    'alert-type' => 'error'
+                );
+                return redirect()->back()->with($notification);
+            }
+
+            $data = Conversation::where('user_id', user()->id)
+                ->where('domain_id', $domainId)
+                ->where('sub_domain_id', $subDomainId)
+                ->first();
 
             $defaults = [
                 'facebook' => $data ? $data->facebook : null,
@@ -39,7 +95,8 @@ class ConversionController extends Controller
                 Conversation::where('id', $data->id)->update(
                     [
                         'user_id' => user()->id,
-			            'domain_id' => getDomain()->id,
+			            'domain_id' => $domainId,
+			            'sub_domain_id' => $subDomainId,
 //                        'facebook' => $request->facebook ?? $defaults['facebook'],
 //                        'whatsapp' => $request->whatsapp ?? $defaults['whatsapp'],
 //                        'phone' => $request->phone ?? $defaults['phone'],
@@ -52,7 +109,8 @@ class ConversionController extends Controller
                 Conversation::create(
                     [
                         'user_id' => user()->id,
-			            'domain_id' => getDomain()->id,
+                        'domain_id' => $domainId,
+                        'sub_domain_id' => $subDomainId,
 //                        'facebook' => $request->facebook ?? $defaults['facebook'],
 //                        'whatsapp' => $request->whatsapp ?? $defaults['whatsapp'],
 //                        'phone' => $request->phone ?? $defaults['phone'],
