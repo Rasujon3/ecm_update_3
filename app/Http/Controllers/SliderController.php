@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Domain;
+use App\Models\ModuleTutorial;
 use App\Models\Package;
 use App\Models\Slider;
+use App\Models\SubDomain;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
@@ -27,18 +30,55 @@ class SliderController extends Controller
     {
         try
         {
-            $canSliderAdd = false;
+            $selection = getCurrentSelection();
+            $domainId = $selection['domain_id'];
+            $subDomainId = $selection['sub_domain_id'];
 
-            $package = Package::where('id',getDomain()->package_id)->first();
-            if ($package && !empty($package->is_slider)) {
-                if ($package->is_slider === 'Yes') {
-                    $canSliderAdd = true;
-                }
+            if ((!$domainId && !$subDomainId)) {
+                $notification=array(
+                    'messege' => 'Domain & Subdomain mismatch.',
+                    'alert-type' => 'error'
+                );
+                return redirect()->back()->with($notification);
+            }
+
+            $packageId = null;
+
+            if ($domainId) {
+                $packageId = Domain::where('id',$domainId)->first();
+            }
+
+            if (!$domainId && $subDomainId) {
+                $packageId = SubDomain::where('id', $subDomainId)->first();
+            }
+
+            if (!$packageId || empty($packageId->package_id)) {
+                $notification=array(
+                    'messege' => 'Package not found.',
+                    'alert-type' => 'error'
+                );
+                return redirect()->back()->with($notification);
+            }
+
+            $canSliderAdd = $this->canSliderAdd($packageId->package_id);
+
+            $moduleName = 'Slider';
+            $url = null;
+            $tutorial = null;
+            if (!empty($moduleName)) {
+                $tutorial = ModuleTutorial::where('module_title', trim($moduleName))->first();
+            }
+            if($tutorial && !empty($tutorial->video_url)) {
+                $url = $this->getYoutubeEmbedUrl($tutorial->video_url);
             }
 
             if($request->ajax()){
 
-               $sliders = Slider::where('user_id',user()->id)->select('*')->latest();
+               $sliders = Slider::where('user_id',user()->id)
+                   ->where('domain_id', $domainId)
+                   ->where('sub_domain_id', $subDomainId)
+                   ->select('*')
+                   ->latest();
 
                     return Datatables::of($sliders)
                         ->addIndexColumn()
@@ -69,22 +109,73 @@ class SliderController extends Controller
                         ->rawColumns(['image','action','status'])
                         ->make(true);
             }
-            return view('sliders.index', compact('canSliderAdd'));
-        }catch(Exception $e){
+            return view('sliders.index', compact('canSliderAdd', 'url'));
+        } catch(Exception $e) {
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         }
     }
+    function getYoutubeEmbedUrl($url)
+    {
+        $pattern_long = '/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=))([^"&?\/ ]{11})/';
+        $pattern_short = '/youtu\.be\/([^"&?\/ ]{11})/';
 
-    public function create()
+        if (preg_match($pattern_long, $url, $matches)) {
+            $videoId = $matches[1];
+        } elseif (preg_match($pattern_short, $url, $matches)) {
+            $videoId = $matches[1];
+        } else {
+            return null; // Not a valid YouTube URL
+        }
+
+        return 'https://www.youtube.com/embed/' . $videoId;
+    }
+
+    private function canSliderAdd($packageId)
     {
         $canSliderAdd = false;
 
-        $package = Package::where('id',getDomain()->package_id)->first();
+        $package = Package::where('id',$packageId)->first();
         if ($package && !empty($package->is_slider)) {
             if ($package->is_slider === 'Yes') {
                 $canSliderAdd = true;
             }
         }
+        return $canSliderAdd;
+    }
+
+    public function create()
+    {
+        $selection = getCurrentSelection();
+        $domainId = $selection['domain_id'];
+        $subDomainId = $selection['sub_domain_id'];
+
+        if ((!$domainId && !$subDomainId)) {
+            $notification=array(
+                'messege' => 'Domain & Subdomain mismatch.',
+                'alert-type' => 'error'
+            );
+            return redirect()->back()->with($notification);
+        }
+
+        $packageId = null;
+
+        if ($domainId) {
+            $packageId = Domain::where('id',$domainId)->first();
+        }
+
+        if (!$domainId && $subDomainId) {
+            $packageId = SubDomain::where('id', $subDomainId)->first();
+        }
+
+        if (!$packageId || empty($packageId->package_id)) {
+            $notification=array(
+                'messege' => 'Package not found.',
+                'alert-type' => 'error'
+            );
+            return redirect()->back()->with($notification);
+        }
+
+        $canSliderAdd = $this->canSliderAdd($packageId->package_id);
 
         if (!$canSliderAdd) {
             $notification=array(
@@ -95,20 +186,53 @@ class SliderController extends Controller
             return redirect()->route('sliders.index')->with($notification);
         }
 
-        return view('sliders.create');
+        $moduleName = 'Slider';
+        $url = null;
+        $tutorial = null;
+        if (!empty($moduleName)) {
+            $tutorial = ModuleTutorial::where('module_title', trim($moduleName))->first();
+        }
+        if($tutorial && !empty($tutorial->video_url)) {
+            $url = $this->getYoutubeEmbedUrl($tutorial->video_url);
+        }
+
+        return view('sliders.create', compact('url'));
     }
     public function store(StoreSliderRequest $request)
     {
         try
         {
-            $canSliderAdd = false;
+            $selection = getCurrentSelection();
+            $domainId = $selection['domain_id'];
+            $subDomainId = $selection['sub_domain_id'];
 
-            $package = Package::where('id',getDomain()->package_id)->first();
-            if ($package && !empty($package->is_slider)) {
-                if ($package->is_slider === 'Yes') {
-                    $canSliderAdd = true;
-                }
+            if ((!$domainId && !$subDomainId)) {
+                $notification=array(
+                    'messege' => 'Domain & Subdomain mismatch.',
+                    'alert-type' => 'error'
+                );
+                return redirect()->back()->with($notification);
             }
+
+            $packageId = null;
+
+            if ($domainId) {
+                $packageId = Domain::where('id',$domainId)->first();
+            }
+
+            if (!$domainId && $subDomainId) {
+                $packageId = SubDomain::where('id', $subDomainId)->first();
+            }
+
+            if (!$packageId || empty($packageId->package_id)) {
+                $notification=array(
+                    'messege' => 'Package not found.',
+                    'alert-type' => 'error'
+                );
+                return redirect()->back()->with($notification);
+            }
+
+            $canSliderAdd = $this->canSliderAdd($packageId->package_id);
 
             if (!$canSliderAdd) {
                 $notification=array(
@@ -128,7 +252,8 @@ class SliderController extends Controller
             }
             $slider = new Slider();
             $slider->user_id = user()->id;
-            $slider->domain_id = getDomain()->id;
+            $slider->domain_id = $domainId;
+            $slider->sub_domain_id = $subDomainId;
             $slider->title = $request->title;
             $slider->sub_title = $request->sub_title;
             $slider->status = $request->status;
@@ -168,13 +293,6 @@ class SliderController extends Controller
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Slider  $slider
-     * @return \Illuminate\Http\Response
-     */
     public function update(UpdateSliderRequest $request, Slider $slider)
     {
         try

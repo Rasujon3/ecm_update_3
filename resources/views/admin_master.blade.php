@@ -295,16 +295,6 @@
                         <p>Review Content</p>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a
-                        href="{{ route('module-video', 'Review') }}"
-                        class="nav-link"
-                        target="_blank"
-                    >
-                        <i class="far fa-circle nav-icon"></i>
-                        <p>Watch Tutorial</p>
-                    </a>
-                </li>
 
             </ul>
           </li>
@@ -339,16 +329,7 @@
                                 <p>Content</p>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a
-                                href="{{ route('module-video', 'Why Choose Us') }}"
-                                class="nav-link"
-                                target="_blank"
-                            >
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Watch Tutorial</p>
-                            </a>
-                        </li>
+
                     </ul>
                 </li>
         <li class="nav-item">
@@ -463,17 +444,6 @@
                 </a>
               </li>
 
-                <li class="nav-item">
-                    <a
-                        href="{{ route('module-video', 'Slider') }}"
-                        class="nav-link"
-                        target="_blank"
-                    >
-                        <i class="far fa-circle nav-icon"></i>
-                        <p>Watch Tutorial</p>
-                    </a>
-                </li>
-
             </ul>
           </li>
 
@@ -566,17 +536,6 @@
                 </a>
               </li>
 
-                <li class="nav-item">
-                    <a
-                        href="{{ route('module-video', 'Product') }}"
-                        class="nav-link"
-                        target="_blank"
-                    >
-                        <i class="far fa-circle nav-icon"></i>
-                        <p>Watch Tutorial</p>
-                    </a>
-                </li>
-
             </ul>
           </li>
 
@@ -651,16 +610,6 @@
                   <p>All Area</p>
                 </a>
               </li>
-                <li class="nav-item">
-                    <a
-                        href="{{ route('module-video', 'Delivery Charge Area') }}"
-                        class="nav-link"
-                        target="_blank"
-                    >
-                        <i class="far fa-circle nav-icon"></i>
-                        <p>Watch Tutorial</p>
-                    </a>
-                </li>
 
             </ul>
           </li>
@@ -686,16 +635,6 @@
                   <p>All Expense</p>
                 </a>
               </li>
-                <li class="nav-item">
-                    <a
-                        href="{{ route('module-video', 'Expense') }}"
-                        class="nav-link"
-                        target="_blank"
-                    >
-                        <i class="far fa-circle nav-icon"></i>
-                        <p>Watch Tutorial</p>
-                    </a>
-                </li>
 
             </ul>
           </li>
@@ -722,17 +661,6 @@
                   <p>Finance Report</p>
                 </a>
               </li>
-
-                <li class="nav-item">
-                    <a
-                        href="{{ route('module-video', 'Report') }}"
-                        class="nav-link"
-                        target="_blank"
-                    >
-                        <i class="far fa-circle nav-icon"></i>
-                        <p>Watch Tutorial</p>
-                    </a>
-                </li>
 
             </ul>
           </li>
@@ -766,17 +694,6 @@
                 </a>
               </li>
 
-                <li class="nav-item">
-                    <a
-                        href="{{ route('module-video', 'Review') }}"
-                        class="nav-link"
-                        target="_blank"
-                    >
-                        <i class="far fa-circle nav-icon"></i>
-                        <p>Watch Tutorial</p>
-                    </a>
-                </li>
-
             </ul>
           </li>
 
@@ -801,16 +718,7 @@
                                <p>Image</p>
                            </a>
                        </li>
-                       <li class="nav-item">
-                           <a
-                               href="{{ route('module-video', 'Take A Look') }}"
-                               class="nav-link"
-                               target="_blank"
-                           >
-                               <i class="far fa-circle nav-icon"></i>
-                               <p>Watch Tutorial</p>
-                           </a>
-                       </li>
+
                    </ul>
                </li>
 
@@ -910,16 +818,7 @@
                                <p>Content</p>
                            </a>
                        </li>
-                       <li class="nav-item">
-                           <a
-                               href="{{ route('module-video', 'Why Choose Us') }}"
-                               class="nav-link"
-                               target="_blank"
-                           >
-                               <i class="far fa-circle nav-icon"></i>
-                               <p>Watch Tutorial</p>
-                           </a>
-                       </li>
+
                    </ul>
                </li>
 
