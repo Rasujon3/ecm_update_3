@@ -12,6 +12,7 @@ class Video extends Model
     protected $fillable = [
         'user_id',
         'domain_id',
+        'sub_domain_id',
         'video_type',
         'video_url',
         'video_id',

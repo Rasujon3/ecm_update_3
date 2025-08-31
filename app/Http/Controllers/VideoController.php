@@ -15,24 +15,73 @@ class VideoController extends Controller
     }
     public function addVideo(Request $request)
     {
-    	$video = Video::where('user_id',user()->id)->first();
-    	return view('videos.add_video', compact('video'));
+        $selection = getCurrentSelection();
+        $domainId = $selection['domain_id'];
+        $subDomainId = $selection['sub_domain_id'];
+
+        if ((!$domainId && !$subDomainId)) {
+            $notification=array(
+                'messege' => 'Domain & Subdomain mismatch.',
+                'alert-type' => 'error'
+            );
+            return redirect()->route('units.index')->with($notification);
+        }
+
+        $url = getVideoUrl('Video');
+
+        $video = Video::where('user_id',user()->id)
+            ->where('domain_id', $domainId)
+            ->where('sub_domain_id', $subDomainId)
+            ->first();
+
+    	return view('videos.add_video', compact('video', 'url'));
     }
 
     public function saveVideo(Request $request)
     {
     	try
     	{
-    		Video::updateOrCreate(
-			    ['user_id' => user()->id], // Search condition
-			    [
-			        'user_id' => user()->id,
-			        'domain_id' => getDomain()->id,
-			        'video_type' => 'Youtube',
-			        'video_url' => $request->video_url ?? '',
-			        'video_id' => $request->video_url ? getYouTubeVideoId($request) : '',
-			    ]
-			);
+            $selection = getCurrentSelection();
+            $domainId = $selection['domain_id'];
+            $subDomainId = $selection['sub_domain_id'];
+
+            if ((!$domainId && !$subDomainId)) {
+                $notification=array(
+                    'messege' => 'Domain & Subdomain mismatch.',
+                    'alert-type' => 'error'
+                );
+                return redirect()->route('units.index')->with($notification);
+            }
+
+
+            $data = Video::where('user_id', user()->id)
+                ->where('domain_id', $domainId)
+                ->where('sub_domain_id', $subDomainId)
+                ->first();
+
+            if ($data) {
+                Video::where('id', $data->id)->update(
+                    [
+                        'user_id' => user()->id,
+                        'domain_id' => $domainId,
+                        'sub_domain_id' => $subDomainId,
+                        'video_type' => 'Youtube',
+                        'video_url' => $request->video_url ?? '',
+                        'video_id' => $request->video_url ? getYouTubeVideoId($request) : '',
+                    ]
+                );
+            } else {
+                Video::create(
+                    [
+                        'user_id' => user()->id,
+                        'domain_id' => $domainId,
+                        'sub_domain_id' => $subDomainId,
+                        'video_type' => 'Youtube',
+                        'video_url' => $request->video_url ?? '',
+                        'video_id' => $request->video_url ? getYouTubeVideoId($request) : '',
+                    ]
+                );
+            }
 
 			$notification=array(
                 'messege'=>'Successfully updated',
