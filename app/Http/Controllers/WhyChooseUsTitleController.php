@@ -19,14 +19,47 @@ class WhyChooseUsTitleController extends Controller
     }
     public function index()
     {
-        $data = WhyChooseUsTitle::where('user_id', user()->id)->first();
-        return view('whyChooseUsTitle.create',compact('data'));
+        $selection = getCurrentSelection();
+        $domainId = $selection['domain_id'];
+        $subDomainId = $selection['sub_domain_id'];
+
+        if ((!$domainId && !$subDomainId)) {
+            $notification=array(
+                'messege' => 'Domain & Subdomain mismatch.',
+                'alert-type' => 'error'
+            );
+            return redirect()->route('units.index')->with($notification);
+        }
+
+        $url = getVideoUrl('Why Choose Us');
+
+        $data = WhyChooseUsTitle::where('user_id', user()->id)
+            ->where('domain_id', $domainId)
+            ->where('sub_domain_id', $subDomainId)
+            ->first();
+
+        return view('whyChooseUsTitle.create',compact('data','url'));
     }
     public function store(Request $request)
     {
         try
         {
-            $data = WhyChooseUsTitle::where('user_id', user()->id)->first();
+            $selection = getCurrentSelection();
+            $domainId = $selection['domain_id'];
+            $subDomainId = $selection['sub_domain_id'];
+
+            if ((!$domainId && !$subDomainId)) {
+                $notification=array(
+                    'messege' => 'Domain & Subdomain mismatch.',
+                    'alert-type' => 'error'
+                );
+                return redirect()->route('units.index')->with($notification);
+            }
+
+            $data = WhyChooseUsTitle::where('user_id', user()->id)
+                ->where('domain_id', $domainId)
+                ->where('sub_domain_id', $subDomainId)
+                ->first();
 
             $defaults = [
                 'title' => $data ? $data->title : null,
@@ -36,16 +69,20 @@ class WhyChooseUsTitleController extends Controller
                 WhyChooseUsTitle::where('id', $data->id)->update(
                     [
                         'user_id' => user()->id,
-                        'domain_id' => getDomain()->id,
-                        'title' => $request->title ?? $defaults['title'],
+                        'domain_id' => $domainId,
+                        'sub_domain_id' => $subDomainId,
+//                        'title' => $request->title ?? $defaults['title'],
+                        'title' => $request->title ?? '',
                     ]
                 );
             } else {
                 WhyChooseUsTitle::create(
                     [
                         'user_id' => user()->id,
-                        'domain_id' => getDomain()->id,
-                        'title' => $request->title ?? $defaults['title'],
+                        'domain_id' => $domainId,
+                        'sub_domain_id' => $subDomainId,
+//                        'title' => $request->title ?? $defaults['title'],
+                        'title' => $request->title ?? '',
                     ]
                 );
             }

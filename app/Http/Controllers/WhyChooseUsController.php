@@ -20,9 +20,27 @@ class WhyChooseUsController extends Controller
     {
         try
         {
+            $selection = getCurrentSelection();
+            $domainId = $selection['domain_id'];
+            $subDomainId = $selection['sub_domain_id'];
+
+            if ((!$domainId && !$subDomainId)) {
+                $notification=array(
+                    'messege' => 'Domain & Subdomain mismatch.',
+                    'alert-type' => 'error'
+                );
+                return redirect()->route('units.index')->with($notification);
+            }
+
+            $url = getVideoUrl('Why Choose Us');
+
             if($request->ajax()){
 
-                $whyChooseUs = WhyChooseUs::where('user_id', Auth::user()->id,)->select('*')->latest();
+                $whyChooseUs = WhyChooseUs::where('user_id', Auth::user()->id)
+                    ->where('domain_id', $domainId)
+                    ->where('sub_domain_id', $subDomainId)
+                    ->select('*')
+                    ->latest();
 
                 return Datatables::of($whyChooseUs)
                     ->addIndexColumn()
@@ -47,7 +65,7 @@ class WhyChooseUsController extends Controller
                     ->rawColumns(['description', 'action'])
                     ->make(true);
             }
-            return view('whyChooseUs.index');
+            return view('whyChooseUs.index', compact('url'));
         } catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         }
@@ -55,15 +73,30 @@ class WhyChooseUsController extends Controller
 
     public function create()
     {
-        return view('whyChooseUs.create');
+        $url = getVideoUrl('Why Choose Us');
+        return view('whyChooseUs.create', compact('url'));
     }
 
     public function store(WhyChooseUsRequest $request)
     {
         try
         {
+            $selection = getCurrentSelection();
+            $domainId = $selection['domain_id'];
+            $subDomainId = $selection['sub_domain_id'];
+
+            if ((!$domainId && !$subDomainId)) {
+                $notification=array(
+                    'messege' => 'Domain & Subdomain mismatch.',
+                    'alert-type' => 'error'
+                );
+                return redirect()->route('units.index')->with($notification);
+            }
+
             WhyChooseUs::create([
                 'user_id' => Auth::user()->id,
+                'domain_id' => $domainId,
+                'sub_domain_id' => $subDomainId,
                 'description' => $request->description,
             ]);
             $notification = array(
@@ -85,6 +118,7 @@ class WhyChooseUsController extends Controller
                 'messege' => 'Something went wrong!!!',
                 'alert-type' => 'error'
             ];
+
             return redirect()->route('why_choose_us.index')->with($notification);
         }
     }
@@ -101,6 +135,7 @@ class WhyChooseUsController extends Controller
         {
             $whyChooseUs->description = $request->description;
             $whyChooseUs->save();
+
             $notification=array(
                 'messege' => 'Successfully the item has been updated',
                 'alert-type' => 'success',
@@ -109,7 +144,20 @@ class WhyChooseUsController extends Controller
             return redirect()->route('why_choose_us.index')->with($notification);
 
         } catch(Exception $e) {
-            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+            // Log the error
+            Log::error('Error in updating Why Choose Us: ', [
+                'message' => $e->getMessage(),
+                'code' => $e->getCode(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            $notification = [
+                'messege' => 'Something went wrong!!!',
+                'alert-type' => 'error'
+            ];
+
+            return redirect()->route('why_choose_us.index')->with($notification);
         }
     }
 
@@ -118,14 +166,16 @@ class WhyChooseUsController extends Controller
         try
         {
             $whyChooseUs->delete();
-            $notification=array(
-                'messege' => 'Successfully the item has been deleted.',
-                'alert-type' => 'success',
-            );
-
-            return redirect()->route('why_choose_us.index')->with($notification);
-
+            return response()->json(['status'=>true, 'message'=>'Successfully the data has been deleted']);
         } catch(Exception $e) {
+            // Log the error
+            Log::error('Error in deleting Why Choose Us: ', [
+                'message' => $e->getMessage(),
+                'code' => $e->getCode(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         }
     }
