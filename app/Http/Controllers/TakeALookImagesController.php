@@ -23,11 +23,30 @@ class TakeALookImagesController extends Controller
     {
         try
         {
-            $count = TakeALookImg::where('user_id', Auth::user()->id)->count();
+            $selection = getCurrentSelection();
+            $domainId = $selection['domain_id'];
+            $subDomainId = $selection['sub_domain_id'];
+
+            if ((!$domainId && !$subDomainId)) {
+                $notification=array(
+                    'messege' => 'Domain & Subdomain mismatch.',
+                    'alert-type' => 'error'
+                );
+                return redirect()->route('units.index')->with($notification);
+            }
+
+            $url = getVideoUrl('Take A Look');
+
+            $count = TakeALookImg::where('user_id', Auth::user()->id)
+                ->where('domain_id', $domainId)
+                ->where('sub_domain_id', $subDomainId)
+                ->count();
 
             if($request->ajax()){
 
                 $data = TakeALookImg::where('user_id', Auth::user()->id)
+                    ->where('domain_id', $domainId)
+                    ->where('sub_domain_id', $subDomainId)
                     ->select('*')
                     ->latest();
 
@@ -54,7 +73,7 @@ class TakeALookImagesController extends Controller
                     ->rawColumns(['img', 'action'])
                     ->make(true);
             }
-            return view('takeALookImg.index', compact('count'));
+            return view('takeALookImg.index', compact('count', 'url'));
         } catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         }
@@ -62,13 +81,26 @@ class TakeALookImagesController extends Controller
 
     public function create()
     {
-        return view('takeALookImg.create');
+        $url = getVideoUrl('Take A Look');
+        return view('takeALookImg.create', compact('url'));
     }
 
     public function store(TakeALookImgRequest $request)
     {
         try
         {
+            $selection = getCurrentSelection();
+            $domainId = $selection['domain_id'];
+            $subDomainId = $selection['sub_domain_id'];
+
+            if ((!$domainId && !$subDomainId)) {
+                $notification=array(
+                    'messege' => 'Domain & Subdomain mismatch.',
+                    'alert-type' => 'error'
+                );
+                return redirect()->route('units.index')->with($notification);
+            }
+
             // Handle file upload
             $img_url = '';
             if ($request->hasFile('img')) {
@@ -77,7 +109,8 @@ class TakeALookImagesController extends Controller
             }
             TakeALookImg::create([
                 'user_id' => Auth::user()->id,
-                'domain_id' => getDomain()->id,
+                'domain_id' => $domainId,
+                'sub_domain_id' => $subDomainId,
                 'img' => $img_url,
             ]);
             $notification = array(
