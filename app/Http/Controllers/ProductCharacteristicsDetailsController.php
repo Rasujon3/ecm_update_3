@@ -143,7 +143,19 @@ class ProductCharacteristicsDetailsController extends Controller
             return redirect()->route('product_characteristics_details.index')->with($notification);
 
         } catch(Exception $e) {
-            return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+            // Log the error
+            Log::error('Error in updating ProductCharacteristicsDetails: ', [
+                'message' => $e->getMessage(),
+                'code' => $e->getCode(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            $notification = [
+                'messege' => 'Something went wrong!!!',
+                'alert-type' => 'error'
+            ];
+            return redirect()->route('product_characteristics_details.index')->with($notification);
         }
     }
 

@@ -20,14 +20,45 @@ class ProductNarrativeController extends Controller
     }
     public function index()
     {
-        $title = ProductNarrativeTitle::where('user_id', user()->id)->first();
-        return view('productNarrative.product_narrative_title',compact('title'));
+        $selection = getCurrentSelection();
+        $domainId = $selection['domain_id'];
+        $subDomainId = $selection['sub_domain_id'];
+
+        if ((!$domainId && !$subDomainId)) {
+            $notification=array(
+                'messege' => 'Domain & Subdomain mismatch.',
+                'alert-type' => 'error'
+            );
+            return redirect()->route('units.index')->with($notification);
+        }
+
+        $url = getVideoUrl('Product');
+        $title = ProductNarrativeTitle::where('user_id', user()->id)
+            ->where('domain_id', $domainId)
+            ->where('sub_domain_id', $subDomainId)
+            ->first();
+        return view('productNarrative.product_narrative_title',compact('title', 'url'));
     }
     public function store(Request $request)
     {
         try
         {
-            $data = ProductNarrativeTitle::where('user_id', user()->id)->first();
+            $selection = getCurrentSelection();
+            $domainId = $selection['domain_id'];
+            $subDomainId = $selection['sub_domain_id'];
+
+            if ((!$domainId && !$subDomainId)) {
+                $notification=array(
+                    'messege' => 'Domain & Subdomain mismatch.',
+                    'alert-type' => 'error'
+                );
+                return redirect()->route('units.index')->with($notification);
+            }
+
+            $data = ProductNarrativeTitle::where('user_id', user()->id)
+                ->where('domain_id', $domainId)
+                ->where('sub_domain_id', $subDomainId)
+                ->first();
 
             $defaults = [
                 'title' => $data ? $data->title : null,
@@ -37,16 +68,20 @@ class ProductNarrativeController extends Controller
                 ProductNarrativeTitle::where('id', $data->id)->update(
                     [
                         'user_id' => user()->id,
-			            'domain_id' => getDomain()->id,
-                        'title' => $request->title ?? $defaults['title'],
+                        'domain_id' => $domainId,
+                        'sub_domain_id' => $subDomainId,
+//                        'title' => $request->title ?? $defaults['title'],
+                        'title' => $request->title ?? '',
                     ]
                 );
             } else {
                 ProductNarrativeTitle::create(
                     [
                         'user_id' => user()->id,
-			            'domain_id' => getDomain()->id,
-                        'title' => $request->title ?? $defaults['title'],
+                        'domain_id' => $domainId,
+                        'sub_domain_id' => $subDomainId,
+//                        'title' => $request->title ?? $defaults['title'],
+                        'title' => $request->title ?? '',
                     ]
                 );
             }
