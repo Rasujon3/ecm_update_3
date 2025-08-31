@@ -29,7 +29,7 @@ class AllProductContentController extends Controller
                 'messege' => 'Domain & Subdomain mismatch.',
                 'alert-type' => 'error'
             );
-            return redirect()->route('dashboard')->with($notification);
+            return redirect()->route('units.index')->with($notification);
         }
 
         $url = getVideoUrl('Product');
@@ -54,7 +54,7 @@ class AllProductContentController extends Controller
                     'messege' => 'Domain & Subdomain mismatch.',
                     'alert-type' => 'error'
                 );
-                return redirect()->route('dashboard')->with($notification);
+                return redirect()->route('units.index')->with($notification);
             }
 
             $data = AllProductContent::where('user_id', user()->id)

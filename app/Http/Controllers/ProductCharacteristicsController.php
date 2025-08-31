@@ -19,8 +19,25 @@ class ProductCharacteristicsController extends Controller
     }
     public function index()
     {
-        $title = ProductCharacteristicsTitle::where('user_id', user()->id)->first();
-        return view('productCharacteristics.product_characteristics_title',compact('title'));
+        $selection = getCurrentSelection();
+        $domainId = $selection['domain_id'];
+        $subDomainId = $selection['sub_domain_id'];
+
+        if ((!$domainId && !$subDomainId)) {
+            $notification=array(
+                'messege' => 'Domain & Subdomain mismatch.',
+                'alert-type' => 'error'
+            );
+            return redirect()->route('units.index')->with($notification);
+        }
+
+        $url = getVideoUrl('Product');
+
+        $title = ProductCharacteristicsTitle::where('user_id', user()->id)
+            ->where('domain_id', $domainId)
+            ->where('sub_domain_id', $subDomainId)
+            ->first();
+        return view('productCharacteristics.product_characteristics_title',compact('title', 'url'));
     }
     public function store(Request $request)
     {

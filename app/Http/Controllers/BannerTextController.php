@@ -28,7 +28,7 @@ class BannerTextController extends Controller
                 'messege' => 'Domain & Subdomain mismatch.',
                 'alert-type' => 'error'
             );
-            return redirect()->back()->with($notification);
+            return redirect()->route('units.index')->with($notification);
         }
 
         $bannerText = BannerText::where('user_id', user()->id)
@@ -77,7 +77,7 @@ class BannerTextController extends Controller
                     'messege' => 'Domain & Subdomain mismatch.',
                     'alert-type' => 'error'
                 );
-                return redirect()->back()->with($notification);
+                return redirect()->route('units.index')->with($notification);
             }
 
             $data = BannerText::where('user_id', user()->id)

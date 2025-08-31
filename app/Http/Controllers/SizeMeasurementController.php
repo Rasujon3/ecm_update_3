@@ -30,7 +30,7 @@ class SizeMeasurementController extends Controller
                 'messege' => 'Domain & Subdomain mismatch.',
                 'alert-type' => 'error'
             );
-            return redirect()->back()->with($notification);
+            return redirect()->route('units.index')->with($notification);
         }
 
         $moduleName = 'Size Measurement';
@@ -79,7 +79,7 @@ class SizeMeasurementController extends Controller
                     'messege' => 'Domain & Subdomain mismatch.',
                     'alert-type' => 'error'
                 );
-                return redirect()->back()->with($notification);
+                return redirect()->route('units.index')->with($notification);
             }
 
             $data = SizeMeasurement::where('user_id', user()->id)

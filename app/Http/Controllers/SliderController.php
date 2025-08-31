@@ -39,7 +39,7 @@ class SliderController extends Controller
                     'messege' => 'Domain & Subdomain mismatch.',
                     'alert-type' => 'error'
                 );
-                return redirect()->back()->with($notification);
+                return redirect()->route('units.index')->with($notification);
             }
 
             $packageId = null;
@@ -154,7 +154,7 @@ class SliderController extends Controller
                 'messege' => 'Domain & Subdomain mismatch.',
                 'alert-type' => 'error'
             );
-            return redirect()->back()->with($notification);
+            return redirect()->route('units.index')->with($notification);
         }
 
         $packageId = null;
@@ -211,7 +211,7 @@ class SliderController extends Controller
                     'messege' => 'Domain & Subdomain mismatch.',
                     'alert-type' => 'error'
                 );
-                return redirect()->back()->with($notification);
+                return redirect()->route('units.index')->with($notification);
             }
 
             $packageId = null;

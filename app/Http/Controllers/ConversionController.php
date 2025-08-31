@@ -30,7 +30,7 @@ class ConversionController extends Controller
                 'messege' => 'Domain & Subdomain mismatch.',
                 'alert-type' => 'error'
             );
-            return redirect()->back()->with($notification);
+            return redirect()->route('units.index')->with($notification);
         }
         $conversions = Conversation::where('user_id', user()->id)
             ->where('domain_id', $domainId)
@@ -77,7 +77,7 @@ class ConversionController extends Controller
                     'messege' => 'Domain & Subdomain mismatch.',
                     'alert-type' => 'error'
                 );
-                return redirect()->back()->with($notification);
+                return redirect()->route('units.index')->with($notification);
             }
 
             $data = Conversation::where('user_id', user()->id)

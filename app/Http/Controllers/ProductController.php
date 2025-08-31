@@ -43,7 +43,7 @@ class ProductController extends Controller
                     'messege' => 'Domain & Subdomain mismatch.',
                     'alert-type' => 'error'
                 );
-                return redirect()->back()->with($notification);
+                return redirect()->route('units.index')->with($notification);
             }
             if($request->ajax()){
 
@@ -125,7 +125,7 @@ class ProductController extends Controller
                     'messege' => 'Domain & Subdomain mismatch.',
                     'alert-type' => 'error'
                 );
-                return redirect()->back()->with($notification);
+                return redirect()->route('units.index')->with($notification);
             }
 
             $user = User::where('id',user()->id)->first();
