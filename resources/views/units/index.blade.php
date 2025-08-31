@@ -20,6 +20,12 @@
     </div>
     <!-- /.content-header -->
     <section class="content">
+        @if(!empty($url))
+            <button type="button" class="btn btn-success mb-3" id="watchTutorialBtn">
+                Watch Tutorial
+            </button>
+        @endif
+
         <div class="card">
             <div class="card-header">
                 <h3 class="card-title">All Unit</h3>
@@ -36,18 +42,19 @@
                                 <th>Action</th>
                             </tr>
                         </thead>
-                        <tbody class="conts"> 
+                        <tbody class="conts">
                         </tbody>
-                    </table> 
+                    </table>
                 </div>
             </div>
         </div>
+        @include('components.youtubeVideoSection')
     </section>
 </div>
 @endsection
 
 @push('scripts')
-  
+
   <script>
   	$(document).ready(function(){
   		let unit_id;
@@ -75,7 +82,7 @@
 
 	         unit_id = $(this).data('id');
 	         var isUnitchecked = $(this).prop('checked');
-	         var status_val = isUnitchecked ? 'Active' : 'Inactive'; 
+	         var status_val = isUnitchecked ? 'Active' : 'Inactive';
 	         $.ajax({
 
                 url: "{{url('/unit-status-update')}}",
@@ -90,9 +97,9 @@
                         $('.data-table').DataTable().ajax.reload(null, false);
 
                 },
-	                            
+
 	        });
-       }); 
+       });
 
 
        $(document).on('click', '.delete-unit', function(e){
@@ -116,13 +123,31 @@
                             $('.data-table').DataTable().ajax.reload(null, false);
 
                     },
-                                
+
               });
            }
 
        });
 
   	});
+  </script>
+  <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          const btn = document.getElementById("watchTutorialBtn");
+          const videoSection = document.getElementById("tutorialVideoSection");
+          const iframe = document.getElementById("tutorialIframe");
+
+          btn?.addEventListener("click", function () {
+              // Set YouTube embed URL
+              iframe.src = "{{ $url }}";
+
+              // Show section
+              videoSection.style.display = "block";
+
+              // Smooth scroll to video
+              videoSection.scrollIntoView({ behavior: "smooth" });
+          });
+      });
   </script>
 
 @endpush

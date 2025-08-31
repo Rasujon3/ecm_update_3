@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Unit;
+use Exception;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreUnitRequest;
-use App\Http\Requests\UpdateUnitRequest; 
+use App\Http\Requests\UpdateUnitRequest;
 use DataTables;
 
 class UnitController extends Controller
@@ -25,6 +26,8 @@ class UnitController extends Controller
     {
         try
         {
+            $url = getVideoUrl('Product');
+
             if($request->ajax()){
 
                $units = Unit::where('user_id',user()->id)->select('*')->latest();
@@ -36,9 +39,9 @@ class UnitController extends Controller
                         ->addColumn('status', function($row){
                             return '<label class="switch"><input class="' . ($row->status == 'Active' ? 'active-unit' : 'decline-unit') . '" id="status-unit-update"  type="checkbox" ' . ($row->status == 'Active' ? 'checked' : '') . ' data-id="'.$row->id.'"><span class="slider round"></span></label>';
                         })
-                       
+
                         ->addColumn('action', function($row){
-                                                        
+
                            $btn = "";
                            $btn .= '&nbsp;';
                            $btn .= ' <a href="'.route('units.show',$row->id).'" class="btn btn-primary btn-sm action-button edit-unit" data-id="'.$row->id.'"><i class="fa fa-edit"></i></a>';
@@ -46,16 +49,16 @@ class UnitController extends Controller
                             $btn .= '&nbsp;';
 
 
-                            $btn .= ' <a href="#" class="btn btn-danger btn-sm delete-unit action-button" data-id="'.$row->id.'"><i class="fa fa-trash"></i></a>'; 
-        
-                          
-        
+                            $btn .= ' <a href="#" class="btn btn-danger btn-sm delete-unit action-button" data-id="'.$row->id.'"><i class="fa fa-trash"></i></a>';
+
+
+
                             return $btn;
                         })
                         ->rawColumns(['action','status'])
                         ->make(true);
             }
-            return view('units.index');
+            return view('units.index', compact('url'));
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         }
@@ -68,7 +71,8 @@ class UnitController extends Controller
      */
     public function create()
     {
-        return view('units.create');
+        $url = getVideoUrl('Product');
+        return view('units.create', compact('url'));
     }
 
     /**
@@ -80,7 +84,7 @@ class UnitController extends Controller
     public function store(StoreUnitRequest $request)
     {
         try
-        {  
+        {
 
             $unit = new Unit();
             $unit->user_id = user()->id;
@@ -133,7 +137,7 @@ class UnitController extends Controller
     public function update(UpdateUnitRequest $request, Unit $unit)
     {
         try
-        {  
+        {
 
             $unit->title = $request->title;
             $unit->status = $request->status;
@@ -145,7 +149,7 @@ class UnitController extends Controller
             );
 
             return redirect('/units')->with($notification);
-            
+
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         }
@@ -160,8 +164,8 @@ class UnitController extends Controller
     public function destroy(Unit $unit)
     {
         try
-        {   
-            
+        {
+
             $unit->delete();
             return response()->json(['status'=>true, 'message'=>'Successfully the unit has been deleted']);
         }catch(Exception $e){

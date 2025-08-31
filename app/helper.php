@@ -1,5 +1,7 @@
 <?php
- use App\Models\User;
+
+use App\Models\ModuleTutorial;
+use App\Models\User;
  use App\Models\Domain;
  use App\Models\Unit;
  use App\Models\Setting;
@@ -124,4 +126,33 @@ function getCurrentSelection()
         'domain_id' => Session::get('domain_id'),
         'sub_domain_id' => Session::get('sub_domain_id')
     ];
+}
+
+function getVideoUrl($moduleName)
+{
+    # $moduleName = 'Banner Text';
+    $url = null;
+    $tutorial = null;
+    if (!empty($moduleName)) {
+        $tutorial = ModuleTutorial::where('module_title', trim($moduleName))->first();
+    }
+    if($tutorial && !empty($tutorial->video_url)) {
+        $url = getYoutubeEmbedUrl($tutorial->video_url);
+    }
+    return $url;
+}
+function getYoutubeEmbedUrl($url)
+{
+    $pattern_long = '/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=))([^"&?\/ ]{11})/';
+    $pattern_short = '/youtu\.be\/([^"&?\/ ]{11})/';
+
+    if (preg_match($pattern_long, $url, $matches)) {
+        $videoId = $matches[1];
+    } elseif (preg_match($pattern_short, $url, $matches)) {
+        $videoId = $matches[1];
+    } else {
+        return null; // Not a valid YouTube URL
+    }
+
+    return 'https://www.youtube.com/embed/' . $videoId;
 }
