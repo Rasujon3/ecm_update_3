@@ -344,7 +344,12 @@ class PackageAddController extends Controller
             Session::put('sub_domain_id', $id);
         }
 
-        return redirect()->back()->with('success', 'Selection updated successfully!');
+        $notification = [
+            'messege' => 'Selection updated successfully!',
+            'alert-type' => 'success'
+        ];
+
+        return redirect()->back()->with($notification);
     }
 
 }

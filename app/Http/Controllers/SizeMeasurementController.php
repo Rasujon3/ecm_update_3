@@ -6,6 +6,7 @@ use App\Http\Requests\SizeMeasurementRequest;
 use App\Models\AboutUs;
 use App\Models\BannerText;
 use App\Models\LoginPageContent;
+use App\Models\ModuleTutorial;
 use App\Models\Setting;
 use App\Models\SizeMeasurement;
 use Exception;
@@ -20,15 +21,71 @@ class SizeMeasurementController extends Controller
     }
     public function index()
     {
-        $data = SizeMeasurement::where('user_id', user()->id)->first();
-        return view('sizeMeasurement.create',compact('data'));
+        $selection = getCurrentSelection();
+        $domainId = $selection['domain_id'];
+        $subDomainId = $selection['sub_domain_id'];
+
+        if ((!$domainId && !$subDomainId)) {
+            $notification=array(
+                'messege' => 'Domain & Subdomain mismatch.',
+                'alert-type' => 'error'
+            );
+            return redirect()->back()->with($notification);
+        }
+
+        $moduleName = 'Size Measurement';
+        $url = null;
+        $tutorial = null;
+        if (!empty($moduleName)) {
+            $tutorial = ModuleTutorial::where('module_title', trim($moduleName))->first();
+        }
+        if($tutorial && !empty($tutorial->video_url)) {
+            $url = $this->getYoutubeEmbedUrl($tutorial->video_url);
+        }
+
+        $data = SizeMeasurement::where('user_id', user()->id)
+            ->where('domain_id', $domainId)
+            ->where('sub_domain_id', $subDomainId)
+            ->first();
+
+        return view('sizeMeasurement.create',compact('data', 'url'));
+    }
+    function getYoutubeEmbedUrl($url)
+    {
+        $pattern_long = '/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=))([^"&?\/ ]{11})/';
+        $pattern_short = '/youtu\.be\/([^"&?\/ ]{11})/';
+
+        if (preg_match($pattern_long, $url, $matches)) {
+            $videoId = $matches[1];
+        } elseif (preg_match($pattern_short, $url, $matches)) {
+            $videoId = $matches[1];
+        } else {
+            return null; // Not a valid YouTube URL
+        }
+
+        return 'https://www.youtube.com/embed/' . $videoId;
     }
     public function store(SizeMeasurementRequest $request)
     {
 //        dd($request->prev_img,!($request->hasFile('img')),$request->all());
         try
         {
-            $data = SizeMeasurement::where('user_id', user()->id)->first();
+            $selection = getCurrentSelection();
+            $domainId = $selection['domain_id'];
+            $subDomainId = $selection['sub_domain_id'];
+
+            if ((!$domainId && !$subDomainId)) {
+                $notification=array(
+                    'messege' => 'Domain & Subdomain mismatch.',
+                    'alert-type' => 'error'
+                );
+                return redirect()->back()->with($notification);
+            }
+
+            $data = SizeMeasurement::where('user_id', user()->id)
+                ->where('domain_id', $domainId)
+                ->where('sub_domain_id', $subDomainId)
+                ->first();
 
             $defaults = [
                 'img' => $data ? $data->img : null,
@@ -58,7 +115,8 @@ class SizeMeasurementController extends Controller
                 SizeMeasurement::where('id', $data->id)->update(
                     [
                         'user_id' => user()->id,
-			            'domain_id' => getDomain()->id,
+			            'domain_id' => $domainId,
+			            'sub_domain_id' => $subDomainId,
                         'img' => $img_url,
                     ]
                 );
@@ -66,7 +124,8 @@ class SizeMeasurementController extends Controller
                 SizeMeasurement::create(
                     [
                         'user_id' => user()->id,
-			            'domain_id' => getDomain()->id,
+                        'domain_id' => $domainId,
+                        'sub_domain_id' => $subDomainId,
                         'img' => $img_url,
                     ]
                 );
