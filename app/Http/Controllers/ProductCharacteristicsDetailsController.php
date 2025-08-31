@@ -22,9 +22,26 @@ class ProductCharacteristicsDetailsController extends Controller
     {
         try
         {
+            $selection = getCurrentSelection();
+            $domainId = $selection['domain_id'];
+            $subDomainId = $selection['sub_domain_id'];
+
+            if ((!$domainId && !$subDomainId)) {
+                $notification=array(
+                    'messege' => 'Domain & Subdomain mismatch.',
+                    'alert-type' => 'error'
+                );
+                return redirect()->route('units.index')->with($notification);
+            }
+
+            $url = getVideoUrl('Product');
             if($request->ajax()){
 
-                $productCharacteristicsDetails = ProductCharacteristicsDetails::where('user_id', Auth::user()->id,)->select('*')->latest();
+                $productCharacteristicsDetails = ProductCharacteristicsDetails::where('user_id', Auth::user()->id,)
+                    ->where('domain_id', $domainId)
+                    ->where('sub_domain_id', $subDomainId)
+                    ->select('*')
+                    ->latest();
 
                 return Datatables::of($productCharacteristicsDetails)
                     ->addIndexColumn()
@@ -49,7 +66,7 @@ class ProductCharacteristicsDetailsController extends Controller
                     ->rawColumns(['description', 'action'])
                     ->make(true);
             }
-            return view('productCharacteristics.index');
+            return view('productCharacteristics.index', compact('url'));
         } catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         }
@@ -57,16 +74,30 @@ class ProductCharacteristicsDetailsController extends Controller
 
     public function create()
     {
-        return view('productCharacteristics.create');
+        $url = getVideoUrl('Product');
+        return view('productCharacteristics.create', compact('url'));
     }
 
     public function store(WhyChooseUsRequest $request)
     {
         try
         {
+            $selection = getCurrentSelection();
+            $domainId = $selection['domain_id'];
+            $subDomainId = $selection['sub_domain_id'];
+
+            if ((!$domainId && !$subDomainId)) {
+                $notification=array(
+                    'messege' => 'Domain & Subdomain mismatch.',
+                    'alert-type' => 'error'
+                );
+                return redirect()->route('units.index')->with($notification);
+            }
+
             ProductCharacteristicsDetails::create([
                 'user_id' => Auth::user()->id,
-                'domain_id' => getDomain()->id,
+                'domain_id' => $domainId,
+                'sub_domain_id' => $subDomainId,
                 'description' => $request->description,
             ]);
             $notification = array(

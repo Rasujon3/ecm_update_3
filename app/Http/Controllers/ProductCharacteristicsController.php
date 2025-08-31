@@ -43,7 +43,22 @@ class ProductCharacteristicsController extends Controller
     {
         try
         {
-            $data = ProductCharacteristicsTitle::where('user_id', user()->id)->first();
+            $selection = getCurrentSelection();
+            $domainId = $selection['domain_id'];
+            $subDomainId = $selection['sub_domain_id'];
+
+            if ((!$domainId && !$subDomainId)) {
+                $notification=array(
+                    'messege' => 'Domain & Subdomain mismatch.',
+                    'alert-type' => 'error'
+                );
+                return redirect()->route('units.index')->with($notification);
+            }
+
+            $data = ProductCharacteristicsTitle::where('user_id', user()->id)
+                ->where('domain_id', $domainId)
+                ->where('sub_domain_id', $subDomainId)
+                ->first();
 
             $defaults = [
                 'title' => $data ? $data->title : null,
@@ -53,16 +68,20 @@ class ProductCharacteristicsController extends Controller
                 ProductCharacteristicsTitle::where('id', $data->id)->update(
                     [
                         'user_id' => user()->id,
-			            'domain_id' => getDomain()->id,
-                        'title' => $request->title ?? $defaults['title'],
+			            'domain_id' => $domainId,
+			            'sub_domain_id' => $subDomainId,
+//                        'title' => $request->title ?? $defaults['title'],
+                        'title' => $request->title ?? '',
                     ]
                 );
             } else {
                 ProductCharacteristicsTitle::create(
                     [
                         'user_id' => user()->id,
-			            'domain_id' => getDomain()->id,
-                        'title' => $request->title ?? $defaults['title'],
+                        'domain_id' => $domainId,
+                        'sub_domain_id' => $subDomainId,
+//                        'title' => $request->title ?? $defaults['title'],
+                        'title' => $request->title ?? '',
                     ]
                 );
             }
