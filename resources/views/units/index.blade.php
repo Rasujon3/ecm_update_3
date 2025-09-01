@@ -131,7 +131,8 @@
 
   	});
   </script>
-  <script>
+  @if(!empty($url))
+<script>
       document.addEventListener("DOMContentLoaded", function () {
           const btn = document.getElementById("watchTutorialBtn");
           const videoSection = document.getElementById("tutorialVideoSection");
@@ -149,5 +150,6 @@
           });
       });
   </script>
+@endif
 
 @endpush

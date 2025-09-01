@@ -70,6 +70,7 @@
 @endsection
 
 @push('scripts')
+    @if(!empty($url))
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const btn = document.getElementById("watchTutorialBtn");
@@ -88,6 +89,7 @@
             });
         });
     </script>
+    @endif
     <script>
         $('.dropify').dropify().on('dropify.afterClear', function(event, element){
             // Clear hidden field
