@@ -19,14 +19,49 @@ class ReviewContentController extends Controller
     }
     public function index()
     {
-        $data = ReviewContent::where('user_id', user()->id)->first();
-        return view('reviewContent.create',compact('data'));
+        $selection = getCurrentSelection();
+        $domainId = $selection['domain_id'];
+        $subDomainId = $selection['sub_domain_id'];
+
+        if ((!$domainId && !$subDomainId)) {
+            $notification=array(
+                'messege' => 'Domain & Subdomain mismatch.',
+                'alert-type' => 'error'
+            );
+            return redirect()->route('units.index')->with($notification);
+        }
+
+        $url = getVideoUrl('Review');
+
+        $data = ReviewContent::where('user_id', user()->id)
+            ->where('domain_id', $domainId)
+            ->where('sub_domain_id', $subDomainId)
+            ->first();
+
+        return view('reviewContent.create',compact('data', 'url'));
     }
     public function store(Request $request)
     {
         try
         {
-            $data = ReviewContent::where('user_id', user()->id)->first();
+            $selection = getCurrentSelection();
+            $domainId = $selection['domain_id'];
+            $subDomainId = $selection['sub_domain_id'];
+
+            if ((!$domainId && !$subDomainId)) {
+                $notification=array(
+                    'messege' => 'Domain & Subdomain mismatch.',
+                    'alert-type' => 'error'
+                );
+                return redirect()->route('units.index')->with($notification);
+            }
+
+            $url = getVideoUrl('Review');
+
+            $data = ReviewContent::where('user_id', user()->id)
+                ->where('domain_id', $domainId)
+                ->where('sub_domain_id', $subDomainId)
+                ->first();
 
             $defaults = [
                 'title' => $data ? $data->title : null,
@@ -37,7 +72,8 @@ class ReviewContentController extends Controller
                 ReviewContent::where('id', $data->id)->update(
                     [
                         'user_id' => user()->id,
-			            'domain_id' => getDomain()->id,
+                        'domain_id' => $domainId,
+                        'sub_domain_id' => $subDomainId,
 //                        'title' => $request->title ?? $defaults['title'],
 //                        'description' => $request->description ?? $defaults['description'],
                         'title' => $request->title ?? '',
@@ -48,7 +84,8 @@ class ReviewContentController extends Controller
                 ReviewContent::create(
                     [
                         'user_id' => user()->id,
-			            'domain_id' => getDomain()->id,
+                        'domain_id' => $domainId,
+                        'sub_domain_id' => $subDomainId,
                         'title' => $request->title ?? '',
                         'description' => $request->description ?? '',
                     ]
