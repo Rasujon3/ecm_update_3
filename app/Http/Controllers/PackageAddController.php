@@ -97,7 +97,7 @@ class PackageAddController extends Controller
             ]);
 
             $notification = [
-                'messege' => 'Something went wrong!!! ModuleTutorial',
+                'messege' => 'Something went wrong!!!',
                 'alert-type' => 'error'
             ];
 
@@ -146,7 +146,7 @@ class PackageAddController extends Controller
         {
             if ($request->status === 'fail') {
                 $notification = [
-                    'messege' => 'Payment failed, Please try again. status fail',
+                    'messege' => 'Payment failed, Please try again.',
                     'alert-type' => 'error'
                 ];
 
@@ -198,19 +198,21 @@ class PackageAddController extends Controller
 
             $result = json_decode($response,true);
 
-            $result[0]['bank_trx_id'] = 'CHU9WZHL7O';
+//            $result[0]['bank_trx_id'] = 'CHU9WZHL7E';
 
-//            if (!$result || !isset($result[0]) || empty($result[0]['bank_trx_id'])) {
-//                DB::rollback();
-//                $notification = [
-//                    'messege' => 'Payment failed. Please try again. verify error',
-//                    'alert-type' => 'error'
-//                ];
-//
-//                return redirect()->route('package-add')->with($notification);
-//            }
+            if (!$result || !isset($result[0]) || empty($result[0]['bank_trx_id'])) {
+                DB::rollback();
+                $notification = [
+                    'messege' => 'Payment failed. Please try again.',
+                    'alert-type' => 'error'
+                ];
+
+                return redirect()->route('package-add')->with($notification);
+            }
 
             $fullDomain = $domain->domain . '/' . $request->slug;
+            # $fullDomain = 'https://' . getDomain()->domain . '.hosstify.com/' . $request->slug;
+
 
             $subDomain = SubDomain::create([
                 'user_id' => $user->id,
@@ -262,7 +264,7 @@ class PackageAddController extends Controller
             ]);
 
             $notification = [
-                'messege' => 'Something went wrong!!! userPaymentStore',
+                'messege' => 'Something went wrong!!!',
                 'alert-type' => 'error'
             ];
 
@@ -363,24 +365,12 @@ class PackageAddController extends Controller
             $subDomains = SubDomain::where('domain_id', $domain->id)->get();
         }
 
-        if (!Session::has('domain_id') && !Session::has('sub_domain_id')) {
-            Session::put('domains', $domains);
-
-            // Only set domain-related session data if domain exists
-            if ($domain) {
-                Session::put('domain', $domain);
-                Session::put('subDomains', $subDomains);
-                Session::put('full_domain_name', $domain->domain);
-                Session::put('domain_id', $domain->id);
-            } else {
-                Session::put('domain', null);
-                Session::put('subDomains', []);
-                Session::put('full_domain_name', 'No Domain');
-                Session::put('domain_id', null);
-            }
-
-            Session::put('sub_domain_id', null);
-        }
+        Session::put('domains', $domains);
+        Session::put('domain', $domain);
+        Session::put('subDomains', $subDomains);
+        Session::put('full_domain_name', $domain->domain);
+        Session::put('domain_id', $domain->id);
+        Session::put('sub_domain_id', null);
     }
 
 }

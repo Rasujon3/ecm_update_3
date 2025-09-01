@@ -40,18 +40,25 @@
                                     >
                                 </div>
                                 <div class="col-md-6">
-                                    <input type="text" name="slug" class="form-control" id="slug"
-                                           placeholder="Ex: v2" required="" value="{{old('slug')}}">
+                                    <input
+                                        type="text"
+                                        name="slug"
+                                        class="form-control"
+                                        id="slug"
+                                        placeholder="Ex: v2"
+                                        required=""
+                                        value="{{old('slug')}}"
+                                    >
+                                    @error('slug')
+                                        <span class="alert alert-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
                             </div>
-                            @error('slug')
-                            <span class="alert alert-danger">{{ $message }}</span>
-                            @enderror
                         </div>
                     </div>
 
                     @if(count($plans) > 0)
-                        <div class="row">
+                        <div class="row pt-5">
                             @foreach($plans as $plan)
                                 @include('packageAdd.components.pricing-card2', ['plan' => $plan])
                             @endforeach
