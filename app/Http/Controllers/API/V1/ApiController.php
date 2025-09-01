@@ -174,21 +174,16 @@ class ApiController extends Controller
 	            ], 422);
 	        }
 
-
             $domain = null;
-            $slug = $request->slug;
+            $domain = Domain::with('theme', 'package')
+                ->where('domain',$request?->domain)
+                ->first();
 
-            if (!empty($request->slug)) {
-                $domain = SubDomain::with('theme', 'package')->where('slug', $slug)->first();
-            } else {
-                $domain = Domain::with('theme', 'package')->where('domain',$request->domain)->first();
-            }
-
-	        if($request->domain == 'dummy')
-	        {
-	            $user = User::findorfail($request->user_id);
-	            $infoData = Setting::where('user_id',$request->user_id)->first();
-	            $domain = Domain::with('theme', 'package')->where('user_id',$request->user_id)->first();
+            if($request->domain === 'dummy')
+            {
+                $user = User::findorfail($request->user_id);
+                $infoData = Setting::where('user_id',$request->user_id)->first();
+                $domain = Domain::with('theme', 'package')->where('user_id',$request->user_id)->first();
 
                 return response()->json([
                     'status'=>true,
@@ -198,7 +193,20 @@ class ApiController extends Controller
                     'my_theme'=>$user->theme,
                     'domain'=>$domain
                 ]);
-	        }
+            }
+
+            $slug = $request->slug;
+
+            if (!empty($request->slug)) {
+                $domain = SubDomain::with('theme', 'package')
+                    ->where('domain_id', $domain?->id)
+                    ->where('slug', $slug)
+                    ->first();
+            } else {
+                $domain = Domain::with('theme', 'package')
+                    ->where('domain',$request->domain)
+                    ->first();
+            }
 
 	        $infoData = Setting::where('user_id',$domain->user_id)->first();
 
@@ -213,8 +221,12 @@ class ApiController extends Controller
                 'domain'=>$domain
             ]);
 
-    	}catch(Exception $e){
-    		return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+    	} catch(Exception $e) {
+    		return response()->json([
+                'status'=>false,
+                'code'=>$e->getCode(),
+                'message'=>$e->getMessage()
+            ],500);
     	}
     }
 
