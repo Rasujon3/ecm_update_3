@@ -25,4 +25,8 @@ class Package extends Model
     {
         return $this->hasMany(Domain::class);
     }
+    public function subDomain()
+    {
+        return $this->hasMany(SubDomain::class);
+    }
 }

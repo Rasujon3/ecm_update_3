@@ -13,4 +13,8 @@ class Theme extends Model
     {
     	return $this->hasMany(Domain::class);
     }
+    public function subDomain()
+    {
+        return $this->hasOne(SubDomain::class);
+    }
 }

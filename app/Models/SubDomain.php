@@ -26,4 +26,21 @@ class SubDomain extends Model
     {
         return $this->belongsTo(Domain::class);
     }
+    public function theme()
+    {
+        return $this->belongsTo(Theme::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+    public function websitePurchases()
+    {
+        return $this->hasMany(WebsitePurchase::class);
+    }
+    public function package()
+    {
+        return $this->belongsTo(Package::class, 'package_id');
+    }
 }

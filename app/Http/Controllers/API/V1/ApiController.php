@@ -14,6 +14,7 @@ use App\Models\ProductNarrativeDetails;
 use App\Models\ProductNarrativeTitle;
 use App\Models\ReviewContent;
 use App\Models\SizeMeasurement;
+use App\Models\SubDomain;
 use App\Models\TakeALook;
 use App\Models\TakeALookImg;
 use App\Models\Timer;
@@ -160,8 +161,9 @@ class ApiController extends Controller
     	try
     	{
     		$validator = Validator::make($request->all(), [
-    			'domain' => 'required|string',
-    			'user_id' => 'nullable|integer',
+    			'domain' => 'required|string|exists:domains,domain',
+    			'slug' => 'nullable|string|exists:sub_domains,slug',
+    			'user_id' => 'nullable|integer|exists:users,id',
 	        ]);
 
 	        if ($validator->fails()) {
@@ -173,21 +175,43 @@ class ApiController extends Controller
 	        }
 
 
-	        $domain = Domain::with('theme', 'package')->where('domain',$request->domain)->first();
+            $domain = null;
+            $slug = $request->slug;
+
+            if (!empty($request->slug)) {
+                $domain = SubDomain::with('theme', 'package')->where('slug', $slug)->first();
+            } else {
+                $domain = Domain::with('theme', 'package')->where('domain',$request->domain)->first();
+            }
 
 	        if($request->domain == 'dummy')
 	        {
 	            $user = User::findorfail($request->user_id);
 	            $infoData = Setting::where('user_id',$request->user_id)->first();
 	            $domain = Domain::with('theme', 'package')->where('user_id',$request->user_id)->first();
-	            return response()->json(['status'=>true, 'is_dummy'=>true, 'inside_dhaka'=>$infoData?$infoData->inside_delivery_charge:NULL, 'outside_dhaka'=>$infoData?$infoData->outside_delivery_charge:NULL, 'my_theme'=>$user->theme, 'domain'=>$domain]);
+
+                return response()->json([
+                    'status'=>true,
+                    'is_dummy'=>true,
+                    'inside_dhaka'=>$infoData?$infoData->inside_delivery_charge:NULL,
+                    'outside_dhaka'=>$infoData?$infoData->outside_delivery_charge:NULL,
+                    'my_theme'=>$user->theme,
+                    'domain'=>$domain
+                ]);
 	        }
 
 	        $infoData = Setting::where('user_id',$domain->user_id)->first();
 
 	        $user = User::findorfail($domain->user_id);
 
-	        return response()->json(['status'=>true, 'is_dummy'=>false, 'inside_dhaka'=>$infoData?$infoData->inside_delivery_charge:NULL, 'outside_dhaka'=>$infoData?$infoData->outside_delivery_charge:NULL, 'my_theme'=>$user->theme, 'domain'=>$domain]);
+	        return response()->json([
+                'status'=>true,
+                'is_dummy'=>false,
+                'inside_dhaka'=>$infoData?$infoData->inside_delivery_charge:NULL,
+                'outside_dhaka'=>$infoData?$infoData->outside_delivery_charge:NULL,
+                'my_theme'=>$user->theme,
+                'domain'=>$domain
+            ]);
 
     	}catch(Exception $e){
     		return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);

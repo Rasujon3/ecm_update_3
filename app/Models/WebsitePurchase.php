@@ -41,4 +41,8 @@ class WebsitePurchase extends Model
     {
         return $this->belongsTo(Package::class);
     }
+    public function subDomain()
+    {
+        return $this->belongsTo(SubDomain::class);
+    }
 }

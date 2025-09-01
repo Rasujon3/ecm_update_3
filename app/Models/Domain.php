@@ -31,4 +31,8 @@ class Domain extends Model
     {
         return $this->belongsTo(Package::class, 'package_id');
     }
+    public function subDomain()
+    {
+        return $this->hasMany(SubDomain::class);
+    }
 }
