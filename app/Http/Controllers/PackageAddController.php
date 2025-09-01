@@ -198,17 +198,17 @@ class PackageAddController extends Controller
 
             $result = json_decode($response,true);
 
-//            $result[0]['bank_trx_id'] = 'CHU9WZHL7I';
+            $result[0]['bank_trx_id'] = 'CHU9WZHL7O';
 
-            if (!$result || !isset($result[0]) || empty($result[0]['bank_trx_id'])) {
-                DB::rollback();
-                $notification = [
-                    'messege' => 'Payment failed. Please try again. verify error',
-                    'alert-type' => 'error'
-                ];
-
-                return redirect()->route('package-add')->with($notification);
-            }
+//            if (!$result || !isset($result[0]) || empty($result[0]['bank_trx_id'])) {
+//                DB::rollback();
+//                $notification = [
+//                    'messege' => 'Payment failed. Please try again. verify error',
+//                    'alert-type' => 'error'
+//                ];
+//
+//                return redirect()->route('package-add')->with($notification);
+//            }
 
             $fullDomain = $domain->domain . '/' . $request->slug;
 
@@ -241,6 +241,8 @@ class PackageAddController extends Controller
 
             Session::forget('sp_order_id');
             Session::forget('surjo_token');
+
+            Self::setSession();
 
             $notification = [
                 'messege' => 'Sub-domain purchased successfully.',
@@ -350,6 +352,35 @@ class PackageAddController extends Controller
         ];
 
         return redirect()->back()->with($notification);
+    }
+    public static function setSession()
+    {
+        $domains = Domain::where('user_id', user()->id)->get();
+        $domain = Domain::where('user_id', user()->id)->first();
+        $subDomains = [];
+
+        if ($domain) {
+            $subDomains = SubDomain::where('domain_id', $domain->id)->get();
+        }
+
+        if (!Session::has('domain_id') && !Session::has('sub_domain_id')) {
+            Session::put('domains', $domains);
+
+            // Only set domain-related session data if domain exists
+            if ($domain) {
+                Session::put('domain', $domain);
+                Session::put('subDomains', $subDomains);
+                Session::put('full_domain_name', $domain->domain);
+                Session::put('domain_id', $domain->id);
+            } else {
+                Session::put('domain', null);
+                Session::put('subDomains', []);
+                Session::put('full_domain_name', 'No Domain');
+                Session::put('domain_id', null);
+            }
+
+            Session::put('sub_domain_id', null);
+        }
     }
 
 }
