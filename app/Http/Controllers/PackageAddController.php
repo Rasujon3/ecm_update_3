@@ -121,7 +121,7 @@ class PackageAddController extends Controller
                 $data = $response->json();
                 // টোকেন এবং execute_url চেক করা
                 if (isset($data['token']) && isset($data['execute_url'])) {
-                    return $data; // সরাসরি ডেটা রিটার্ন করা
+                    return $data;
                 } else {
                     throw new \Exception('Token not received properly.');
                 }
@@ -136,7 +136,7 @@ class PackageAddController extends Controller
                 'line' => $e->getLine(),
                 'trace' => $e->getTraceAsString()
             ]);
-            throw $e; // এররটি ফেলে দেওয়া যাতে কন্ট্রোলারে ক্যাচ করা যায়
+            throw $e;
         }
     }
     public function userPaymentStore(Request $request)
@@ -198,7 +198,7 @@ class PackageAddController extends Controller
 
             $result = json_decode($response,true);
 
-//            $result[0]['bank_trx_id'] = 'CHU9WZHL7E';
+//            $result[0]['bank_trx_id'] = 'CHU9WZHL7Y';
 
             if (!$result || !isset($result[0]) || empty($result[0]['bank_trx_id'])) {
                 DB::rollback();
@@ -211,12 +211,13 @@ class PackageAddController extends Controller
             }
 
             $fullDomain = $domain->domain . '/' . $request->slug;
-            # $fullDomain = 'https://' . getDomain()->domain . '.hosstify.com/' . $request->slug;
+            # $fullDomain = 'https://' . $domain->domain . '.hosstify.com/' . $request->slug;
 
 
             $subDomain = SubDomain::create([
                 'user_id' => $user->id,
                 'domain_id' => $domain->id,
+                'domain' => $domain->domain,
                 'theme_id' => $domain->theme_id,
                 'package_id' => $domain->package_id,
                 'slug' => $request->slug,

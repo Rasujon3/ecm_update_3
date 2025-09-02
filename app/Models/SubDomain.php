@@ -12,6 +12,7 @@ class SubDomain extends Model
     protected $fillable = [
         'user_id',
         'domain_id',
+        'domain',
         'theme_id',
         'package_id',
         'slug',
