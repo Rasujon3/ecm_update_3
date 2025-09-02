@@ -213,12 +213,12 @@ class ApiController extends Controller
 	        $user = User::findorfail($domain->user_id);
 
 	        return response()->json([
-                'status'=>true,
-                'is_dummy'=>false,
-                'inside_dhaka'=>$infoData?$infoData->inside_delivery_charge:NULL,
-                'outside_dhaka'=>$infoData?$infoData->outside_delivery_charge:NULL,
-                'my_theme'=>$user->theme,
-                'domain'=>$domain
+                'status' => true,
+                'is_dummy' => false,
+                'inside_dhaka' => $infoData ? $infoData->inside_delivery_charge : NULL,
+                'outside_dhaka' => $infoData ? $infoData->outside_delivery_charge : NULL,
+                'my_theme' => $user->theme,
+                'domain' => $domain
             ]);
 
     	} catch(Exception $e) {
@@ -273,7 +273,8 @@ class ApiController extends Controller
     	try
     	{
     		$validator = Validator::make($request->all(), [
-    			'domain' => 'required|string',
+    			'domain' => 'required|string|exists:domains,domain',
+                'slug' => 'nullable|string|exists:sub_domains,slug',
                 'user_id' => 'nullable|integer|exists:users,id',
 	        ]);
 
@@ -287,19 +288,53 @@ class ApiController extends Controller
 
 
 	        $domain = domainDetails($request);
-            if($request->has('user_id') && $request->domain == 'dummy')
-            {
-                $products = Product::with('images','variants')->where('user_id',$request->user_id)->get();
-            }else{
-                $products = Product::with('images','variants')->where('domain_id',$domain->id)->where('status','Active')->get();
+
+	        $slug = null;
+	        $slug = $request?->slug;
+
+            if(!empty($slug)) {
+                $isExist = subDomainExist($domain->id, $domain->user_id, $slug);
+                if (!$isExist) {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Sub domain not found.',
+                    ], 404);
+                }
             }
 
+            if($request->has('user_id') && $request->domain === 'dummy')
+            {
+                $products = Product::with('images','variants')
+                    ->where('user_id',$request->user_id)
+                    ->get();
 
+            } else if(!empty($slug)) {
+                $subDomain = subDomainDetails($domain->id, $domain->user_id, $slug);
 
-	        return response()->json(['status'=>count($products)>0, 'total'=>count($products), 'data'=>$products]);
+                $products = Product::with('images','variants')
+                    ->where('domain_id', null)
+                    ->where('sub_domain_id', $subDomain?->id)
+                    ->where('status','Active')
+                    ->get();
 
-    	}catch(Exception $e){
-    		return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+            } else {
+                $products = Product::with('images','variants')
+                    ->where('domain_id',$domain->id)
+                    ->where('status','Active')
+                    ->get();
+            }
+
+	        return response()->json([
+                'status' => count($products)>0,
+                'total' => count($products),
+                'data' => $products
+            ]);
+    	} catch(Exception $e) {
+    		return response()->json([
+                'status' => false,
+                'code' => $e->getCode(),
+                'message' => $e->getMessage()
+            ],500);
     	}
     }
 

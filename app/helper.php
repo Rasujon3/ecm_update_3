@@ -171,3 +171,20 @@ function getPackage($domainId, $subDomainId)
     }
     return $packageId;
 }
+
+function subDomainDetails($domainId, $userId, $slug)
+{
+    $subDomain = SubDomain::where('slug', $slug)
+        ->where('domain_id', $domainId)
+        ->where('user_id', $userId)
+        ->first();
+    return $subDomain;
+}
+function subDomainExist($domainId, $userId, $slug)
+{
+    $isSubDomainExist = SubDomain::where('slug', $slug)
+        ->where('domain_id', $domainId)
+        ->where('user_id', $userId)
+        ->exists();
+    return $isSubDomainExist;
+}
