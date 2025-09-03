@@ -1313,10 +1313,6 @@ class ApiController extends Controller
 
             if($request->domain === 'dummy')
             {
-                $user = User::findorfail($request->user_id);
-                $infoData = Setting::where('user_id',$request->user_id)->first();
-                $domain = Domain::with('theme', 'package')->where('user_id',$request->user_id)->first();
-
                 $whyChooseUs = WhyChooseUs::where('user_id',$request->user_id)
                     ->latest()
                     ->get();
@@ -1366,21 +1362,26 @@ class ApiController extends Controller
 
             if (!empty($request->slug)) {
                 $subDomain = subDomainDetails($domain->id, $domain->user_id, $slug);
-                $whyChooseUs = WhyChooseUs::where('domain_id', null)
+
+                $whyChooseUs = WhyChooseUs::where('user_id', $domain->user_id)
+                    ->where('domain_id', null)
                     ->where('sub_domain_id', $subDomain?->id)
                     ->latest()
                     ->get();
 
-                $titleData = WhyChooseUsTitle::where('domain_id', null)
+                $titleData = WhyChooseUsTitle::where('user_id', $domain->user_id)
+                    ->where('domain_id', null)
                     ->where('sub_domain_id', $subDomain?->id)
                     ->first();
             } else {
-                $whyChooseUs = WhyChooseUs::where('domain_id', $domain?->id)
+                $whyChooseUs = WhyChooseUs::where('user_id', $domain->user_id)
+                    ->where('domain_id', $domain?->id)
                     ->where('sub_domain_id', null)
                     ->latest()
                     ->get();
 
-                $titleData = WhyChooseUsTitle::where('domain_id', $domain?->id)
+                $titleData = WhyChooseUsTitle::where('user_id', $domain->user_id)
+                    ->where('domain_id', $domain?->id)
                     ->where('sub_domain_id', null)
                     ->first();
             }
@@ -1718,8 +1719,23 @@ class ApiController extends Controller
         try
         {
             $validator = Validator::make($request->all(), [
-                'domain' => 'required|string',
-                'user_id' => 'nullable|integer',
+                'domain' => [
+                    'required',
+                    'string',
+                    Rule::when(
+                        fn($input) => $input->domain === 'dummy',
+                        ['in:dummy'],
+                        [Rule::exists('domains', 'domain')]
+                    ),
+                ],
+                'slug' => 'nullable|string|exists:sub_domains,slug',
+                'user_id' => [
+                    Rule::when(
+                        fn($input) => $input->domain === 'dummy',
+                        ['required','integer','exists:users,id'],
+                        ['nullable','integer','exists:users,id']
+                    ),
+                ],
             ]);
 
             if ($validator->fails()) {
@@ -1730,18 +1746,57 @@ class ApiController extends Controller
                 ], 422);
             }
 
+            $data = null;
 
+            if($request->domain === 'dummy')
+            {
+                $data = BannerText::where('user_id',$request->user_id)->first();
+
+                return response()->json([
+                    'status' => (bool)$data,
+                    'data' => $data
+                ]);
+            }
+
+            $slug = $request?->slug;
+            $domain = null;
+            $data = null;
             $domain = domainDetails($request);
 
-            $data = null;
-            if ($request->has('user_id')) {
-                $data = BannerText::where('user_id',$request->user_id)->first();
-            } else if ($domain && isset($domain->id)) {
-                $data = BannerText::where('domain_id',$domain?->id)->first();
+            if (!$domain) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Domain not found.',
+                ]);
+            }
+
+            if(!empty($slug)) {
+                $isExist = subDomainExist($domain->id, $domain->user_id, $slug);
+                if (!$isExist) {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Sub domain not found.',
+                    ], 404);
+                }
+            }
+
+            if (!empty($request->slug)) {
+                $subDomain = subDomainDetails($domain->id, $domain->user_id, $slug);
+
+                $data = BannerText::where('user_id', $domain->user_id)
+                    ->where('domain_id', null)
+                    ->where('sub_domain_id', $subDomain?->id)
+                    ->first();
+            } else {
+                $data = BannerText::where('user_id', $domain->user_id)
+                    ->where('domain_id', $domain?->id)
+                    ->where('sub_domain_id', null)
+                    ->first();
             }
 
             return response()->json([
                 'status' => (bool)$data,
+                'message' => $data ? 'Data Retrieved Successfully.' : 'No data found.',
                 'data' => $data
             ]);
 
