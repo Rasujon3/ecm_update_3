@@ -22,7 +22,7 @@ class ServiceController extends Controller
         $this->middleware('auth_check');
     }
 
-    public function index(Request $request) 
+    public function index(Request $request)
     {
         try
         {
@@ -37,9 +37,9 @@ class ServiceController extends Controller
                         ->addColumn('status', function($row){
                             return '<label class="switch"><input class="' . ($row->status == 'Active' ? 'active-service' : 'decline-service') . '" id="status-service-update"  type="checkbox" ' . ($row->status == 'Active' ? 'checked' : '') . ' data-id="'.$row->id.'"><span class="slider round"></span></label>';
                         })
-                       
+
                         ->addColumn('action', function($row){
-                                                        
+
                            $btn = "";
                            $btn .= '&nbsp;';
                            $btn .= ' <a href="'.route('services.show',$row->id).'" class="btn btn-primary btn-sm action-button edit-service" data-id="'.$row->id.'"><i class="fa fa-edit"></i></a>';
@@ -47,10 +47,10 @@ class ServiceController extends Controller
                             $btn .= '&nbsp;';
 
 
-                            $btn .= ' <a href="#" class="btn btn-danger btn-sm delete-service action-button" data-id="'.$row->id.'"><i class="fa fa-trash"></i></a>'; 
-        
-                          
-        
+                            $btn .= ' <a href="#" class="btn btn-danger btn-sm delete-service action-button" data-id="'.$row->id.'"><i class="fa fa-trash"></i></a>';
+
+
+
                             return $btn;
                         })
                         ->rawColumns(['action','status'])
@@ -155,7 +155,7 @@ class ServiceController extends Controller
     {
         try
         {
-            $service->packages()->delete();
+            # $service->packages()->delete();
             $service->delete();
             return response()->json(['status'=>true, 'message'=>'Successfully the service has been deleted']);
         }catch(Exception $e){
