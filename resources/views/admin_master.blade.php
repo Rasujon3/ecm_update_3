@@ -699,25 +699,51 @@
             </ul>
           </li>
 
+          {{--
+              <li class="nav-item">
+                       <a href="#" class="nav-link">
+                           <i class="nav-icon fas fa-eye"></i>
+                           <p>
+                               Take a Look
+                               <i class="fas fa-angle-left right"></i>
+                           </p>
+                       </a>
+                       <ul class="nav nav-treeview">
+                           <li class="nav-item">
+                               <a href="{{ route('take-a-look-title') }}" class="nav-link">
+                                   <i class="far fa-circle nav-icon"></i>
+                                   <p>Title</p>
+                               </a>
+                           </li>
+                           <li class="nav-item">
+                               <a href="{{ route('take-a-look-images.index') }}" class="nav-link">
+                                   <i class="far fa-circle nav-icon"></i>
+                                   <p>Image</p>
+                               </a>
+                           </li>
+
+                       </ul>
+                   </li>
+                   --}}
           <li class="nav-item">
                    <a href="#" class="nav-link">
-                       <i class="nav-icon fas fa-eye"></i>
+                       <i class="nav-icon fas fa-key"></i>
                        <p>
-                           Take a Look
+                           Why Choose Us
                            <i class="fas fa-angle-left right"></i>
                        </p>
                    </a>
                    <ul class="nav nav-treeview">
                        <li class="nav-item">
-                           <a href="{{ route('take-a-look-title') }}" class="nav-link">
+                           <a href="{{ route('why-choose-us-title') }}" class="nav-link">
                                <i class="far fa-circle nav-icon"></i>
                                <p>Title</p>
                            </a>
                        </li>
                        <li class="nav-item">
-                           <a href="{{ route('take-a-look-images.index') }}" class="nav-link">
-                               <i class="far fa-circle nav-icon"></i>
-                               <p>Image</p>
+                           <a href="{{ route('why_choose_us.index') }}" class="nav-link">
+                               <i class="nav-icon far fa-circle"></i>
+                               <p>Content</p>
                            </a>
                        </li>
 
@@ -759,7 +785,7 @@
                        </p>
                    </a>
                </li>
-               <li class="nav-item">
+          <li class="nav-item">
                    <a href="{{url('/social-media-settings')}}" class="nav-link">
                        <i class="nav-icon fas fa-globe"></i>
                        <p>
@@ -767,30 +793,7 @@
                        </p>
                    </a>
                </li>
-               <li class="nav-item">
-                   <a href="#" class="nav-link">
-                       <i class="nav-icon fas fa-key"></i>
-                       <p>
-                           Why Choose Us
-                           <i class="fas fa-angle-left right"></i>
-                       </p>
-                   </a>
-                   <ul class="nav nav-treeview">
-                       <li class="nav-item">
-                           <a href="{{ route('why-choose-us-title') }}" class="nav-link">
-                               <i class="far fa-circle nav-icon"></i>
-                               <p>Title</p>
-                           </a>
-                       </li>
-                       <li class="nav-item">
-                           <a href="{{ route('why_choose_us.index') }}" class="nav-link">
-                               <i class="nav-icon far fa-circle"></i>
-                               <p>Content</p>
-                           </a>
-                       </li>
 
-                   </ul>
-               </li>
         @endif
           <li class="nav-header">Settings</li>
 
