@@ -57,7 +57,7 @@ Route::middleware(['custom.cors', 'throttle:60,1'])->group(function () {
 
     Route::post('user-payment-store', [ApiController::class, 'userPaymentStore']);
 
-    Route::get('/why-choose-us', [ApiController::class, 'whyChooseUs'])->name('why-choose-us');
+    Route::post('/why-choose-us', [ApiController::class, 'whyChooseUs'])->name('why-choose-us');
 
     Route::get('/banner', [ApiController::class, 'banner'])->name('banner');
 

@@ -37,7 +37,7 @@
             <!-- small box -->
             <div class="small-box bg-info">
               <div class="inner">
-                <h3>{{$data->totalPackages}}</h3>
+                <h3>{{ $data->totalPackages ?? 0 }}</h3>
 
                 <p>Total Packages</p>
               </div>
@@ -49,7 +49,7 @@
             <!-- small box -->
             <div class="small-box bg-success">
               <div class="inner">
-                <h3>{{$data->totalUsers}}</h3>
+                <h3>{{ $data->totalUsers ?? 0 }}</h3>
                 <p>Total Users</p>
               </div>
 
@@ -60,7 +60,7 @@
             <!-- small box -->
             <div class="small-box bg-warning">
               <div class="inner">
-                <h3>{{$data->totalProducts}}</h3>
+                <h3>{{ $data->totalProducts ?? 0 }}</h3>
 
                 <p>Total Products</p>
               </div>
@@ -71,17 +71,17 @@
             <!-- small box -->
             <div class="small-box bg-danger">
               <div class="inner">
-                <h3>{{$data->totalServices}}</h3>
+                <h3>{{ $data->totalServices ?? 0}}</h3>
 
                 <p>Total Services</p>
               </div>
- 
+
             </div>
           </div>
           <!-- ./col -->
         </div>
         <!-- /.row -->
-       
+
       </div><!-- /.container-fluid -->
     </section>
     <!-- /.content -->

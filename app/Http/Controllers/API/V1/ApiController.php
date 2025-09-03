@@ -24,6 +24,7 @@ use Exception;
 use Illuminate\Http\Request;
 use App\Models\Domain;
 use App\Models\User;
+use Illuminate\Validation\Rule;
 use Validator;
 use DB;
 use Illuminate\Support\Facades\File;
@@ -161,9 +162,23 @@ class ApiController extends Controller
     	try
     	{
     		$validator = Validator::make($request->all(), [
-    			'domain' => 'required|string|exists:domains,domain',
+                'domain' => [
+                    'required',
+                    'string',
+                    Rule::when(
+                        fn($input) => $input->domain === 'dummy',
+                        ['in:dummy'],
+                        [Rule::exists('domains', 'domain')]
+                    ),
+                ],
     			'slug' => 'nullable|string|exists:sub_domains,slug',
-    			'user_id' => 'nullable|integer|exists:users,id',
+                'user_id' => [
+                    Rule::when(
+                        fn($input) => $input->domain === 'dummy',
+                        ['required','integer','exists:users,id'],
+                        ['nullable','integer','exists:users,id']
+                    ),
+                ],
 	        ]);
 
 	        if ($validator->fails()) {
@@ -173,11 +188,6 @@ class ApiController extends Controller
 	                'data' => $validator->errors()
 	            ], 422);
 	        }
-
-            $domain = null;
-            $domain = Domain::with('theme', 'package')
-                ->where('domain',$request?->domain)
-                ->first();
 
             if($request->domain === 'dummy')
             {
@@ -194,6 +204,11 @@ class ApiController extends Controller
                     'domain'=>$domain
                 ]);
             }
+
+            $domain = null;
+            $domain = Domain::with('theme', 'package')
+                ->where('domain',$request?->domain)
+                ->first();
 
             $slug = $request->slug;
 
@@ -273,9 +288,23 @@ class ApiController extends Controller
     	try
     	{
     		$validator = Validator::make($request->all(), [
-    			'domain' => 'required|string|exists:domains,domain',
+                'domain' => [
+                    'required',
+                    'string',
+                    Rule::when(
+                        fn($input) => $input->domain === 'dummy',
+                        ['in:dummy'],
+                        [Rule::exists('domains', 'domain')]
+                    ),
+                ],
                 'slug' => 'nullable|string|exists:sub_domains,slug',
-                'user_id' => 'nullable|integer|exists:users,id',
+                'user_id' => [
+                    Rule::when(
+                        fn($input) => $input->domain === 'dummy',
+                        ['required','integer','exists:users,id'],
+                        ['nullable','integer','exists:users,id']
+                    ),
+                ],
 	        ]);
 
 	        if ($validator->fails()) {
@@ -1254,7 +1283,23 @@ class ApiController extends Controller
     public function whyChooseUs(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'user_id'  => 'required|exists:users,id',
+            'domain' => [
+                'required',
+                'string',
+                Rule::when(
+                    fn($input) => $input->domain === 'dummy',
+                    ['in:dummy'],
+                    [Rule::exists('domains', 'domain')]
+                ),
+            ],
+            'slug' => 'nullable|string|exists:sub_domains,slug',
+            'user_id' => [
+                Rule::when(
+                    fn($input) => $input->domain === 'dummy',
+                    ['required','integer','exists:users,id'],
+                    ['nullable','integer','exists:users,id']
+                ),
+            ],
         ]);
 
         if ($validator->fails()) {
@@ -1265,9 +1310,81 @@ class ApiController extends Controller
             ], 422);
         }
         try {
-            $whyChooseUs = WhyChooseUs::where('user_id',$request->user_id)->latest()->get();
-            $titleData = WhyChooseUsTitle::where('user_id',$request->user_id)->first();
+
+            if($request->domain === 'dummy')
+            {
+                $user = User::findorfail($request->user_id);
+                $infoData = Setting::where('user_id',$request->user_id)->first();
+                $domain = Domain::with('theme', 'package')->where('user_id',$request->user_id)->first();
+
+                $whyChooseUs = WhyChooseUs::where('user_id',$request->user_id)
+                    ->latest()
+                    ->get();
+
+                $titleData = WhyChooseUsTitle::where('user_id',$request->user_id)->first();
+
+                $title = null;
+
+                if ($titleData && (!empty($titleData->title))) {
+                    $title = $titleData->title;
+                }
+
+                return response()->json([
+                    'status'  => true,
+                    'message' => 'Why choose us retrieved successfully.',
+                    'title'    => $title,
+                    'data'    => $whyChooseUs
+                ], 200);
+            }
+
+            $domain = null;
+            $domain = Domain::where('domain',$request?->domain)->first();
+
+            if (!$domain) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Domain not found.',
+                ], 404);
+            }
+
+            $slug = $request?->slug;
+
+            $whyChooseUs = [];
+            $subDomain = null;
+            $titleData = null;
             $title = null;
+
+            if(!empty($slug)) {
+                $isExist = subDomainExist($domain->id, $domain->user_id, $slug);
+                if (!$isExist) {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Sub domain not found.',
+                    ], 404);
+                }
+            }
+
+            if (!empty($request->slug)) {
+                $subDomain = subDomainDetails($domain->id, $domain->user_id, $slug);
+                $whyChooseUs = WhyChooseUs::where('domain_id', null)
+                    ->where('sub_domain_id', $subDomain?->id)
+                    ->latest()
+                    ->get();
+
+                $titleData = WhyChooseUsTitle::where('domain_id', null)
+                    ->where('sub_domain_id', $subDomain?->id)
+                    ->first();
+            } else {
+                $whyChooseUs = WhyChooseUs::where('domain_id', $domain?->id)
+                    ->where('sub_domain_id', null)
+                    ->latest()
+                    ->get();
+
+                $titleData = WhyChooseUsTitle::where('domain_id', $domain?->id)
+                    ->where('sub_domain_id', null)
+                    ->first();
+            }
+
             if ($titleData && (!empty($titleData->title))) {
                 $title = $titleData->title;
             }
