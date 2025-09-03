@@ -250,8 +250,23 @@ class ApiController extends Controller
     	try
     	{
     		$validator = Validator::make($request->all(), [
-    			'domain' => 'required|string',
-    			'user_id' => 'nullable|integer',
+                'domain' => [
+                    'required',
+                    'string',
+                    Rule::when(
+                        fn($input) => $input->domain === 'dummy',
+                        ['in:dummy'],
+                        [Rule::exists('domains', 'domain')]
+                    ),
+                ],
+                'slug' => 'nullable|string|exists:sub_domains,slug',
+                'user_id' => [
+                    Rule::when(
+                        fn($input) => $input->domain === 'dummy',
+                        ['required','integer','exists:users,id'],
+                        ['nullable','integer','exists:users,id']
+                    ),
+                ],
 	        ]);
 
 	        if ($validator->fails()) {
@@ -262,24 +277,52 @@ class ApiController extends Controller
 	            ], 422);
 	        }
 
+            if($request->domain === 'dummy')
+            {
+                $sliders = Slider::where('user_id', $request->user_id)
+                    ->where('status','Active')
+                    ->get();
 
+                return response()->json([
+                    'status'=>count($sliders)>0,
+                    'total'=>count($sliders),
+                    'data'=>$sliders
+                ]);
+            }
+
+            $domain = null;
+            $sliders = [];
+            $slug = $request->slug;
 	        $domain = domainDetails($request);
 
-	        if($request->has('user_id'))
-	        {
-	            $sliders = Slider::where('user_id',$request->user_id)->where('status','Active')->get();
-	        }else{
-	            $sliders = Slider::where('domain_id',$domain->id)->where('status','Active')->get();
-	        }
+            if (!empty($request->slug)) {
+                $subDomain = subDomainDetails($domain->id, $domain->user_id, $slug);
+
+                $sliders = Slider::where('user_id',$domain?->user_id)
+                    ->where('domain_id', null)
+                    ->where('sub_domain_id', $subDomain?->id)
+                    ->where('status','Active')
+                    ->get();
+            } else {
+                $sliders = Slider::where('user_id',$domain?->user_id)
+                    ->where('domain_id',$domain?->id)
+                    ->where('sub_domain_id', null)
+                    ->where('status','Active')
+                    ->get();
+            }
 
 	        return response()->json([
-                'status'=>count($sliders)>0,
-                'total'=>count($sliders),
-                'data'=>$sliders
+                'status' => count($sliders) > 0,
+                'total' => count($sliders),
+                'data' => $sliders
             ]);
 
-    	}catch(Exception $e){
-    		return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+    	} catch(Exception $e){
+    		return response()->json([
+                'status' => false,
+                'code' => $e->getCode(),
+                'message' => $e->getMessage()
+            ],500);
     	}
     }
 
