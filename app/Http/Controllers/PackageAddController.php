@@ -74,7 +74,10 @@ class PackageAddController extends Controller
                 return redirect()->route('package-add')->with($notification);
             }
 
-            $isExist = SubDomain::where('slug', $slug)->exists();
+            $isExist = SubDomain::where('slug', $slug)
+                ->where('user_id', user()->id)
+                ->exists();
+
             if ($isExist) {
                 $notification = [
                     'messege' => 'Sub-domain already exists for you.',
