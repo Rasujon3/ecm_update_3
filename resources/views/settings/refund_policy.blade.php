@@ -35,13 +35,15 @@
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label for="refund_policy">Refund Policy <span class="required">*</span></label>
-                                <textarea class="description" name="refund_policy" id="refund_policy">{!!old('refund_policy',$setting->refund_policy)!!}</textarea>
+                                <textarea class="description" name="refund_policy" id="refund_policy">
+                                    {!!old('refund_policy',($setting->refund_policy ?? ''))!!}
+                                </textarea>
                                 @error('refund_policy')
                                 <span class="alert alert-danger">{{ $message }}</span>
                                 @enderror
-                            </div> 
+                            </div>
                         </div>
-                        
+
                         <div class="form-group w-100 px-2">
                             <button type="submit" class="btn btn-success">Save Changes</button>
                         </div>

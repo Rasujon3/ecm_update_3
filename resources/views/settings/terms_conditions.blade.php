@@ -35,13 +35,15 @@
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label for="terms_conditions">Terms & Conditions <span class="required">*</span></label>
-                                <textarea class="description" name="terms_conditions" id="terms_conditions">{!!old('terms_conditions',$setting->terms_conditions)!!}</textarea>
+                                <textarea class="description" name="terms_conditions" id="terms_conditions">
+                                    {!! old('terms_conditions', ($setting->terms_conditions ?? '')) !!}
+                                </textarea>
                                 @error('terms_conditions')
-                                <span class="alert alert-danger">{{ $message }}</span>
+                                    <span class="alert alert-danger">{{ $message }}</span>
                                 @enderror
-                            </div> 
+                            </div>
                         </div>
-                        
+
                         <div class="form-group w-100 px-2">
                             <button type="submit" class="btn btn-success">Save Changes</button>
                         </div>
