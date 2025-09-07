@@ -1786,8 +1786,22 @@ class ApiController extends Controller
         try
         {
             $validator = Validator::make($request->all(), [
-                'domain' => 'required|string|exists:domains,domain',
-                'user_id' => 'nullable|integer|exists:users,user_id',
+                'domain' => [
+                    'required',
+                    'string',
+                    Rule::when(
+                        fn($input) => $input->domain === 'dummy',
+                        ['in:dummy'],
+                        [Rule::exists('domains', 'domain')]
+                    ),
+                ],
+                'user_id' => [
+                    Rule::when(
+                        fn($input) => $input->domain === 'dummy',
+                        ['required','integer','exists:users,id'],
+                        ['nullable','integer','exists:users,id']
+                    ),
+                ],
             ]);
 
             if ($validator->fails()) {
@@ -1798,24 +1812,74 @@ class ApiController extends Controller
                 ], 422);
             }
 
+            if($request->domain === 'dummy')
+            {
+                $data = Timer::where('user_id', $request->user_id)->first();
+
+                $transformedData = [];
+                if ($data) {
+                    $transformedData = [
+                        'id' => $data->id ?? '',
+                        'domain_id' => $data->domain_id ?? '',
+                        'user_id' => $data->user_id ?? '',
+                        'title' => $data->title ?? '',
+                        # 'time_iso_format' => \Carbon\Carbon::createFromTimestamp($data->time, 'Asia/Dhaka')->toISOString(), // ISO format like created_at
+                        # 'time_readable' => \Carbon\Carbon::createFromTimestamp($data->time, 'Asia/Dhaka')->format('d M Y, h:i A'), // Human readable
+                        # 'timestamp' => $data->time,
+                        'time' => $data->time ? \Carbon\Carbon::createFromTimestamp($data->time, 'Asia/Dhaka')->toISOString() : '', // ISO format like created_at,
+                        'created_at' => $data->created_at ?? '',
+                        'updated_at' => $data->updated_at ?? '',
+                    ];
+                }
+                return response()->json([
+                    'status' => !empty($transformedData),
+                    'data' => $transformedData
+                ]);
+            }
 
             $domain = domainDetails($request);
 
-            $data = Timer::where('domain_id', $domain?->id)->first();
+            $slug = $request->slug;
+
+            $data = null;
+
+            if(!empty($slug)) {
+                $isExist = subDomainExist($domain->id, $domain->user_id, $slug);
+                if (!$isExist) {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Sub domain not found.',
+                    ], 404);
+                }
+            }
+
+            if (!empty($request->slug)) {
+                $subDomain = subDomainDetails($domain->id, $domain->user_id, $slug);
+
+                $data = Timer::where('user_id', $domain->user_id)
+                    ->where('domain_id', null)
+                    ->where('sub_domain_id', $subDomain?->id)
+                    ->first();
+            } else {
+                $data = Timer::where('user_id', $domain->user_id)
+                    ->where('domain_id', $domain?->id)
+                    ->where('sub_domain_id', null)
+                    ->first();
+            }
 
             $transformedData = [];
             if ($data) {
                 $transformedData = [
-                    'id' => $data->id,
-                    'domain_id' => $data->domain_id,
-                    'user_id' => $data->user_id,
-                    'title' => $data->title,
+                    'id' => $data->id ?? '',
+                    'domain_id' => $data->domain_id ?? '',
+                    'user_id' => $data->user_id ?? '',
+                    'title' => $data->title ?? '',
                     # 'time_iso_format' => \Carbon\Carbon::createFromTimestamp($data->time, 'Asia/Dhaka')->toISOString(), // ISO format like created_at
                     # 'time_readable' => \Carbon\Carbon::createFromTimestamp($data->time, 'Asia/Dhaka')->format('d M Y, h:i A'), // Human readable
                     # 'timestamp' => $data->time,
-                    'time' => \Carbon\Carbon::createFromTimestamp($data->time, 'Asia/Dhaka')->toISOString(), // ISO format like created_at,
-                    'created_at' => $data->created_at,
-                    'updated_at' => $data->updated_at,
+                    'time' => $data->time ? \Carbon\Carbon::createFromTimestamp($data->time, 'Asia/Dhaka')->toISOString() : '', // ISO format like created_at,
+                    'created_at' => $data->created_at ?? '',
+                    'updated_at' => $data->updated_at ?? '',
                 ];
             }
 

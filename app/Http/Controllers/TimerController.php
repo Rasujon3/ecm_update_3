@@ -78,7 +78,10 @@ class TimerController extends Controller
                 return redirect()->route('units.index')->with($notification);
             }
 
-            $data = Timer::where('user_id', user()->id)->first();
+            $data = Timer::where('user_id', user()->id)
+                ->where('domain_id', $domainId)
+                ->where('sub_domain_id', $subDomainId)
+                ->first();
 
             $defaults = [
                 'title' => $data ? $data->title : null,
