@@ -159,7 +159,7 @@ class ProductController extends Controller
                 );
                 return redirect()->back()->with($notification);
             }
-            if($count > $package->max_product)
+            if($count >= $package->max_product)
             {
                 $notification=array(
                  'messege'=>'Product Upload Quota Exceeded',
