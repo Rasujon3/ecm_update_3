@@ -1,17 +1,51 @@
 @php
  $user_id = user()->id;
  $domain_id = getDomain()->id;
- $data = DB::selectOne("
+
+ $selection = getCurrentSelection();
+ $domainId = $selection['domain_id'] ?? 'NULL';
+ $subDomainId = $selection['sub_domain_id'] ?? 'NULL';
+
+$sql = "
     SELECT
-        (SELECT COUNT(*) FROM sliders WHERE user_id=$user_id) AS totalSliders,
-        (SELECT COUNT(*) FROM units WHERE user_id=$user_id) AS totalUnits,
-        (SELECT COUNT(*) FROM products WHERE user_id=$user_id) AS totalProducts,
-        (SELECT COUNT(*) FROM reviews WHERE user_id=$user_id) AS totalReviews,
-        (SELECT COUNT(*) FROM orderdetails WHERE domain_id=$domain_id) AS totalOrders,
-        (SELECT COUNT(*) FROM orderdetails WHERE DATE(created_at) = CURDATE() AND domain_id=$domain_id) AS todayOrders,
-        (SELECT COUNT(*) FROM orderdetails WHERE MONTH(created_at) = MONTH(CURDATE()) AND YEAR(created_at) = YEAR(CURDATE()) AND domain_id=$domain_id) AS monthlyOrders,
-        (SELECT COUNT(*) FROM orderdetails WHERE YEAR(created_at) = YEAR(CURDATE()) AND domain_id=$domain_id) AS yearlyOrders
-");
+        (SELECT COUNT(*) FROM sliders
+            WHERE user_id = $user_id
+            AND domain_id = $domainId
+            AND sub_domain_id = $subDomainId
+        ) AS totalSliders,
+        (SELECT COUNT(*) FROM units
+            WHERE user_id = $user_id
+            AND domain_id = $domainId
+        ) AS totalUnits,
+        (SELECT COUNT(*) FROM products
+            WHERE user_id = $user_id
+            AND domain_id = $domainId
+            AND sub_domain_id = $subDomainId
+        ) AS totalProducts,
+        (SELECT COUNT(*) FROM reviews
+            WHERE user_id = $user_id
+            AND domain_id = $domainId
+            AND sub_domain_id = $subDomainId
+        ) AS totalReviews,
+        (SELECT COUNT(*) FROM orderdetails
+            WHERE domain_id = $domainId
+        ) AS totalOrders,
+        (SELECT COUNT(*) FROM orderdetails
+            WHERE DATE(created_at) = CURDATE()
+            AND domain_id = $domainId
+        ) AS todayOrders,
+        (SELECT COUNT(*) FROM orderdetails
+            WHERE MONTH(created_at) = MONTH(CURDATE())
+              AND YEAR(created_at) = YEAR(CURDATE())
+              AND domain_id = $domainId
+        ) AS monthlyOrders,
+        (SELECT COUNT(*) FROM orderdetails
+            WHERE YEAR(created_at) = YEAR(CURDATE())
+              AND domain_id = $domainId
+        ) AS yearlyOrders
+";
+
+$data = DB::selectOne($sql);
 @endphp
 @extends('admin_master')
 @section('content')
@@ -44,7 +78,7 @@
             <!-- small box -->
             <div class="small-box bg-info">
               <div class="inner">
-                <h3>{{$data->totalSliders}}</h3>
+                <h3>{{$totalSliders ?? 0}}</h3>
 
                 <p>Total Sliders</p>
               </div>
@@ -57,7 +91,7 @@
             <!-- small box -->
             <div class="small-box bg-success">
               <div class="inner">
-                <h3>{{$data->totalProducts}}</h3>
+                <h3>{{$totalProducts ?? 0}}</h3>
 
                 <p>Total Products</p>
               </div>
@@ -69,7 +103,7 @@
             <!-- small box -->
             <div class="small-box bg-warning">
               <div class="inner">
-                <h3>{{$data->totalUnits}}</h3>
+                <h3>{{$totalUnits ?? 0}}</h3>
 
                 <p>Total Product Units</p>
               </div>
@@ -81,11 +115,11 @@
             <!-- small box -->
             <div class="small-box bg-danger">
               <div class="inner">
-                <h3>{{$data->totalReviews}}</h3>
+                <h3>{{$totalReviews ?? 0}}</h3>
 
                 <p>Total Reviews</p>
               </div>
- 
+
             </div>
           </div>
           <!-- ./col -->
@@ -96,7 +130,7 @@
             <!-- small box -->
             <div class="small-box bg-info">
               <div class="inner">
-                <h3>{{$data->totalOrders}}</h3>
+                <h3>{{$totalOrders ?? 0}}</h3>
 
                 <p>Total Orders</p>
               </div>
@@ -109,7 +143,7 @@
             <!-- small box -->
             <div class="small-box bg-success">
               <div class="inner">
-                <h3>{{$data->todayOrders}}</h3>
+                <h3>{{$todayOrders ?? 0}}</h3>
 
                 <p>Today Orders</p>
               </div>
@@ -121,7 +155,7 @@
             <!-- small box -->
             <div class="small-box bg-warning">
               <div class="inner">
-                <h3>{{$data->monthlyOrders}}</h3>
+                <h3>{{$monthlyOrders ?? 0}}</h3>
 
                 <p>This month Orders</p>
               </div>
@@ -133,11 +167,11 @@
             <!-- small box -->
             <div class="small-box bg-danger">
               <div class="inner">
-                <h3>{{$data->yearlyOrders}}</h3>
+                <h3>{{$yearlyOrders ?? 0}}</h3>
 
                 <p>This year orders</p>
               </div>
- 
+
             </div>
           </div>
           <!-- ./col -->
@@ -145,7 +179,7 @@
 
         </div>
         <!-- /.row -->
-       
+
       </div><!-- /.container-fluid -->
     </section>
     <!-- /.content -->

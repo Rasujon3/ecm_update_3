@@ -345,7 +345,7 @@ class PackageAddController extends Controller
     {
         if ($type === 'domain') {
             $domain = Domain::find($id);
-            Session::put('full_domain_name', $domain->domain);
+            Session::put('full_domain_name', 'https://' . $domain->domain  . '.hosstify.com');
             Session::put('domain_id', $id);
             Session::put('sub_domain_id', null);
         } elseif ($type === 'subdomain') {
@@ -375,7 +375,7 @@ class PackageAddController extends Controller
         Session::put('domains', $domains);
         Session::put('domain', $domain);
         Session::put('subDomains', $subDomains);
-        Session::put('full_domain_name', $domain->domain);
+        Session::put('full_domain_name', 'https://' . $domain->domain  . '.hosstify.com');
         Session::put('domain_id', $domain->id);
         Session::put('sub_domain_id', null);
     }
