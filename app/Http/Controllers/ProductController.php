@@ -274,6 +274,7 @@ class ProductController extends Controller
                 }
             }
 
+            /*
             $countAfterInsert = Product::where('user_id',user()->id)
                 ->where('domain_id', $domainId)
                 ->where('sub_domain_id', $subDomainId)
@@ -283,6 +284,7 @@ class ProductController extends Controller
                 $user->products_add_status = 1;
                 $user->save();
             }
+            */
 
             DB::commit();
 
