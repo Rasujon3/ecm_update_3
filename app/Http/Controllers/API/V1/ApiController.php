@@ -560,8 +560,23 @@ class ApiController extends Controller
     	try
     	{
     		$validator = Validator::make($request->all(), [
-    			'domain' => 'required|string',
-    			'user_id' => 'nullable|integer',
+                'domain' => [
+                    'required',
+                    'string',
+                    Rule::when(
+                        fn($input) => $input->domain === 'dummy',
+                        ['in:dummy'],
+                        [Rule::exists('domains', 'domain')]
+                    ),
+                ],
+                'slug' => 'nullable|string|exists:sub_domains,slug',
+                'user_id' => [
+                    Rule::when(
+                        fn($input) => $input->domain === 'dummy',
+                        ['required','integer','exists:users,id'],
+                        ['nullable','integer','exists:users,id']
+                    ),
+                ],
 	        ]);
 
 	        if ($validator->fails()) {
@@ -572,23 +587,57 @@ class ApiController extends Controller
 	            ], 422);
 	        }
 
+            if($request->domain === 'dummy')
+            {
+                $video = Video::where('user_id',$request->user_id)->first();
+
+                return response()->json([
+                    'status' => (bool)$video,
+                    'data' => $video
+                ]);
+            }
+
+            $slug = null;
+            $slug = $request?->slug;
 	        $domain = domainDetails($request);
+            $video = null;
 
-	        if($request->has('user_id'))
-	        {
-	            $video = Video::where('user_id',$request->user_id)->first();
-	        }else{
-	            $video = Video::where('domain_id',$domain->id)->first();
-	        }
+            if(!empty($slug)) {
+                $isExist = subDomainExist($domain->id, $domain->user_id, $slug);
+                if (!$isExist) {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Sub domain not found.',
+                    ], 404);
+                }
+            }
 
+            if(!empty($slug))
+            {
+                $subDomain = subDomainDetails($domain->id, $domain->user_id, $slug);
 
+                $video = Video::where('user_id', $domain->user_id)
+                    ->where('domain_id', null)
+                    ->where('sub_domain_id', $subDomain?->id)
+                    ->first();
+            } else {
+                $video = Video::where('user_id', $domain->user_id)
+                    ->where('domain_id',$domain->id)
+                    ->where('sub_domain_id', null)
+                    ->first();
+            }
 
-	       // return $video;
+	        return response()->json([
+                'status' => (bool)$video,
+                'data' => $video
+            ]);
 
-	        return response()->json(['status'=>$video?true:false, 'data'=>$video?$video:new \stdClass()]);
-
-    	}catch(Exception $e){
-    		return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+    	} catch(Exception $e) {
+    		return response()->json([
+                'status' => false,
+                'code' => $e->getCode(),
+                'message' => $e->getMessage()
+            ],500);
     	}
     }
 
