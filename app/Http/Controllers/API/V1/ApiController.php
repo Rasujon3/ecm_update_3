@@ -1840,7 +1840,7 @@ class ApiController extends Controller
                 $data = ProductCharacteristicsDetails::where('user_id', $domain->user_id)
                     ->where('domain_id', $domain?->id)
                     ->where('sub_domain_id', null)
-                    ->first();
+                    ->get();
             }
 
             return response()->json([
