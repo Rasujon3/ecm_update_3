@@ -50,7 +50,7 @@
                     </a>
 
                 @endif
-                @if($userInfo->products_add_status === 0)
+                @if($isCreated)
                    <a href="{{route('products.create')}}" class="btn btn-primary add-new mb-2">Add New Product</a>
                 @endif
                 <div class="fetch-data table-responsive">

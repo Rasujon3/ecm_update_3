@@ -458,14 +458,16 @@
                </a>
            </li>
 
-           <li class="nav-item">
-               <a href="{{ route('size-measurement') }}" class="nav-link">
-                   <i class="nav-icon fas fa-ruler"></i>
-                   <p>
-                       Size Measurement
-                   </p>
-               </a>
-           </li>
+           @if(getPackageTypeId() && getPackageTypeId() == 2)
+               <li class="nav-item">
+                   <a href="{{ route('size-measurement') }}" class="nav-link">
+                       <i class="nav-icon fas fa-ruler"></i>
+                       <p>
+                           Size Measurement
+                       </p>
+                   </a>
+               </li>
+           @endif
 
            <li class="nav-item">
                <a href="{{ route('timer') }}" class="nav-link">

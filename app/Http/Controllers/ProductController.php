@@ -80,10 +80,10 @@ class ProductController extends Controller
 
                            $btn .= ' <a href="'.route('products.show',$row->id).'" class="btn btn-primary btn-sm action-button edit-product" data-id="'.$row->id.'"><i class="fa fa-edit"></i></a>';
 
-                            $btn .= '&nbsp;';
+                            # $btn .= '&nbsp;';
 
 
-                            $btn .= ' <a href="#" class="btn btn-danger btn-sm delete-product action-button" data-id="'.$row->id.'"><i class="fa fa-trash"></i></a>';
+                            # $btn .= ' <a href="#" class="btn btn-danger btn-sm delete-product action-button" data-id="'.$row->id.'"><i class="fa fa-trash"></i></a>';
 
 
 
@@ -96,19 +96,72 @@ class ProductController extends Controller
             $userInfo = User::with('domain', 'package')
                 ->where('id',Auth::user()->id)
                 ->firstOrFail();
-            return view('products.index', compact('userInfo', 'url'));
+            $isCreated = $this->isCreated();
+            return view('products.index', compact('userInfo', 'url', 'isCreated'));
         }catch(Exception $e){
             return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
         }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    private function isCreated()
+    {
+        $selection = getCurrentSelection();
+        $domainId = $selection['domain_id'];
+        $subDomainId = $selection['sub_domain_id'];
+
+        if ((!$domainId && !$subDomainId)) {
+            $notification=array(
+                'messege' => 'Domain & Subdomain mismatch.',
+                'alert-type' => 'error'
+            );
+            return redirect()->route('units.index')->with($notification);
+        }
+
+        $isCreated = false;
+
+        $count = Product::where('user_id',user()->id)
+            ->where('domain_id', $domainId)
+            ->where('sub_domain_id', $subDomainId)
+            ->count();
+
+        $packageId = getPackage($domainId, $subDomainId);
+        if (!$packageId || empty($packageId->package_id)) {
+            $notification=array(
+                'messege' => 'Package not found.',
+                'alert-type' => 'error'
+            );
+            return redirect()->back()->with($notification);
+        }
+
+        $package = Package::where('id',$packageId->package_id)->first();
+        if(!$package)
+        {
+            $notification=array(
+                'messege' => 'Package not found.',
+                'alert-type' => 'error',
+            );
+            return redirect()->back()->with($notification);
+        }
+
+        if($count < $package->max_product)
+        {
+            $isCreated = true;
+        }
+
+        return $isCreated;
+    }
+
     public function create()
     {
+        $isCreated = $this->isCreated();
+        if (!$isCreated) {
+            $notification=array(
+                'messege'=>'Product Upload Quota Exceeded',
+                'alert-type'=>'error',
+            );
+            return redirect()->route('products.index')->with($notification);
+        }
+
         return view('products.create');
     }
     public function store(StoreProductRequest $request)
@@ -133,6 +186,7 @@ class ProductController extends Controller
                 ->where('domain_id', $domainId)
                 ->where('sub_domain_id', $subDomainId)
                 ->count();
+            /*
             if ($user->products_add_status === 1 || $count >= 5) {
                 $notification = array(
                     'messege'=>'You can not add more than 5 products',
@@ -140,6 +194,7 @@ class ProductController extends Controller
                 );
                 return redirect()->route('products.index')->with($notification);
             }
+            */
 
             $packageId = getPackage($domainId, $subDomainId);
             if (!$packageId || empty($packageId->package_id)) {
@@ -205,7 +260,8 @@ class ProductController extends Controller
             $product->description = $request->description;
             $product->fake_stocks = $request->fake_stocks;
             //$product->status = auth()->user()->status ==='Inactive' ? "Active" : "Inactive";
-            $product->status = 'Inactive';
+             $product->status = 'Inactive';
+//            $product->status = $request->status;
             $product->save();
 
             if($request->hasFile('gallery_images')) {
@@ -218,18 +274,22 @@ class ProductController extends Controller
                 }
             }
 
-            $notification=array(
-                'messege'=>'Successfully a product has been added',
-                'alert-type'=>'success',
-            );
-            DB::commit();
-
-            $countAfterInsert = Product::where('user_id',user()->id)->count();
-            if($countAfterInsert >= 5)
+            $countAfterInsert = Product::where('user_id',user()->id)
+                ->where('domain_id', $domainId)
+                ->where('sub_domain_id', $subDomainId)
+                ->count();
+            if($countAfterInsert >= $package->max_product)
             {
                 $user->products_add_status = 1;
                 $user->save();
             }
+
+            DB::commit();
+
+            $notification=array(
+                'messege'=>'Successfully a product has been added',
+                'alert-type'=>'success',
+            );
             return redirect('/add-variant/'.$product->id)->with($notification);
 
         }catch(Exception $e){

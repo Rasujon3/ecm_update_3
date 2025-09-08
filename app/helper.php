@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\ModuleTutorial;
+use App\Models\Package;
 use App\Models\SubDomain;
 use App\Models\User;
  use App\Models\Domain;
@@ -187,4 +188,29 @@ function subDomainExist($domainId, $userId, $slug)
         ->where('user_id', $userId)
         ->exists();
     return $isSubDomainExist;
+}
+
+function getPackageTypeId()
+{
+    $authId = Auth::user()->id;
+    $domain = Domain::where('user_id', $authId)->first();
+
+    $packageId = null;
+
+    $package = null;
+    $packageType = null;
+
+    if ($domain) {
+        $packageId = $domain?->package_id;
+    }
+
+    if ($packageId) {
+        $package = Package::where('id', $packageId)->first();
+    }
+
+    if ($package) {
+        $packageType = $package->package_type;
+    }
+
+    return $packageType;
 }

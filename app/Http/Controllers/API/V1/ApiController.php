@@ -212,6 +212,16 @@ class ApiController extends Controller
 
             $slug = $request->slug;
 
+            if(!empty($slug)) {
+                $isExist = subDomainExist($domain->id, $domain->user_id, $slug);
+                if (!$isExist) {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Sub domain not found.',
+                    ], 404);
+                }
+            }
+
             if (!empty($request->slug)) {
                 $domain = SubDomain::with('theme', 'package')
                     ->where('domain_id', $domain?->id)
@@ -294,6 +304,16 @@ class ApiController extends Controller
             $sliders = [];
             $slug = $request->slug;
 	        $domain = domainDetails($request);
+
+            if(!empty($slug)) {
+                $isExist = subDomainExist($domain->id, $domain->user_id, $slug);
+                if (!$isExist) {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Sub domain not found.',
+                    ], 404);
+                }
+            }
 
             if (!empty($request->slug)) {
                 $subDomain = subDomainDetails($domain->id, $domain->user_id, $slug);
