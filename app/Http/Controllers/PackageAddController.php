@@ -148,6 +148,7 @@ class PackageAddController extends Controller
         try
         {
             if ($request->status === 'fail') {
+                DB::rollback();
                 $notification = [
                     'messege' => 'Payment failed, Please try again.',
                     'alert-type' => 'error'
@@ -213,8 +214,8 @@ class PackageAddController extends Controller
                 return redirect()->route('package-add')->with($notification);
             }
 
-            $fullDomain = $domain->domain . '/' . $request->slug;
-            # $fullDomain = 'https://' . $domain->domain . '.hosstify.com/' . $request->slug;
+            # $fullDomain = $domain->domain . '/' . $request->slug;
+            $fullDomain = 'https://' . $domain->domain . '.hosstify.com/' . $request->slug;
 
 
             $subDomain = SubDomain::create([
@@ -222,7 +223,8 @@ class PackageAddController extends Controller
                 'domain_id' => $domain->id,
                 'domain' => $domain->domain,
                 'theme_id' => $domain->theme_id,
-                'package_id' => $domain->package_id,
+                # 'package_id' => $domain->package_id,
+                'package_id' => $request->packageId,
                 'slug' => $request->slug,
                 'full_domain' => $fullDomain,
                 'shop_name' => $domain->shop_name,
@@ -235,7 +237,8 @@ class PackageAddController extends Controller
                 'gateway_order_id' => $sp_order_id,
                 'domain_id'        => $domain->id,
                 'user_id'          => $user->id,
-                'package_id'       => $domain->package_id,
+                # 'package_id'       => $domain->package_id,
+                'package_id'       => $request->packageId,
                 'sub_domain_id'    => $subDomain->id,
                 'theme'            => $user->theme,
                 'payment_method'   => "shurjopay",
