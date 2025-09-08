@@ -82,7 +82,7 @@ class PackageAddController extends Controller
                 $notification = [
                     'messege' => 'Sub-domain already exists for you.',
                     'alert-type' => 'error'
-                    ];
+                ];
 
                 return redirect()->route('package-add')->with($notification);
             }
@@ -202,7 +202,7 @@ class PackageAddController extends Controller
 
             $result = json_decode($response,true);
 
-//            $result[0]['bank_trx_id'] = 'CHU9WZHL7Y';
+            // $result[0]['bank_trx_id'] = 'CHU9WZHL7B';
 
             if (!$result || !isset($result[0]) || empty($result[0]['bank_trx_id'])) {
                 DB::rollback();
@@ -215,7 +215,7 @@ class PackageAddController extends Controller
             }
 
             # $fullDomain = $domain->domain . '/' . $request->slug;
-            $fullDomain = 'https://' . $domain->domain . '.hosstify.com/' . $request->slug;
+            $fullDomain = 'https://' . strtolower($domain->domain) . '.hosstify.com/' . $request->slug;
 
 
             $subDomain = SubDomain::create([
@@ -224,7 +224,7 @@ class PackageAddController extends Controller
                 'domain' => $domain->domain,
                 'theme_id' => $domain->theme_id,
                 # 'package_id' => $domain->package_id,
-                'package_id' => $request->packageId,
+                'package_id' => $request->package_id,
                 'slug' => $request->slug,
                 'full_domain' => $fullDomain,
                 'shop_name' => $domain->shop_name,
@@ -238,7 +238,7 @@ class PackageAddController extends Controller
                 'domain_id'        => $domain->id,
                 'user_id'          => $user->id,
                 # 'package_id'       => $domain->package_id,
-                'package_id'       => $request->packageId,
+                'package_id'       => $request->package_id,
                 'sub_domain_id'    => $subDomain->id,
                 'theme'            => $user->theme,
                 'payment_method'   => "shurjopay",
