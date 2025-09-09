@@ -84,7 +84,7 @@
                     {{-- Domains --}}
                     <a class="dropdown-item {{ Session::get('domain_id') == Session::get('domain')->id ? 'active' : '' }}"
                        href="{{ route('set.selection', ['type' => 'domain', 'id' => Session::get('domain')->id]) }}">
-                        {{ Session::get('domain')->domain }}
+                        {{ 'https://' . Session::get('domain')->domain . '.hosstify.com' }}
                     </a>
 
                     {{-- Subdomains --}}
@@ -783,7 +783,7 @@
                    <a href="{{ route('package-add') }}" class="nav-link">
                        <i class="nav-icon fas fa-plus"></i>
                        <p>
-                           Purchase new loading page
+                           Purchase new landing page
                        </p>
                    </a>
                </li>

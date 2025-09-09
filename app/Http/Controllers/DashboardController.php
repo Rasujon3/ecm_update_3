@@ -3,7 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Domain;
+use App\Models\Orderdetail;
+use App\Models\Product;
+use App\Models\Review;
+use App\Models\Slider;
 use App\Models\SubDomain;
+use App\Models\Unit;
 use Exception;
 use Illuminate\Http\Request;
 use Auth;
@@ -27,8 +32,65 @@ class DashboardController extends Controller
             {
                 return view('layouts.admin_app');
             }
-    		return view('layouts.app');
-    	} catch(Exception $e){
+
+            $user_id = user()->id;
+            $domain_id = getDomain()->id;
+
+            $selection = getCurrentSelection();
+            $domainId = $selection['domain_id'];
+            $subDomainId = $selection['sub_domain_id'];
+
+            // Sliders
+            $totalSliders = Slider::where('user_id', $user_id)
+                ->where('domain_id', $domainId)
+                ->where('sub_domain_id', $subDomainId)
+                ->count();
+
+            // Products
+            $totalProducts = Product::where('user_id', $user_id)
+                ->where('domain_id', $domainId)
+                ->where('sub_domain_id', $subDomainId)
+                ->count();
+
+            // Reviews
+            $totalReviews = Review::where('user_id', $user_id)
+                ->where('domain_id', $domainId)
+                ->where('sub_domain_id', $subDomainId)
+                ->count();
+
+            // Units (sub_domain_id ছাড়া)
+            $totalUnits = Unit::where('user_id', $user_id)
+                ->where('domain_id', $domain_id)
+                ->count();
+
+            // Orders (total, today, monthly, yearly)
+            $totalOrders = OrderDetail::where('domain_id', $domain_id)->count();
+
+            $todayOrders = OrderDetail::where('domain_id', $domain_id)
+                ->whereDate('created_at', now())
+                ->count();
+
+            $monthlyOrders = OrderDetail::where('domain_id', $domain_id)
+                ->whereMonth('created_at', now()->month)
+                ->whereYear('created_at', now()->year)
+                ->count();
+
+            $yearlyOrders = OrderDetail::where('domain_id', $domain_id)
+                ->whereYear('created_at', now()->year)
+                ->count();
+
+            return view('layouts.app', compact(
+                'totalSliders',
+                'totalProducts',
+                'totalReviews',
+                'totalUnits',
+                'totalOrders',
+                'todayOrders',
+                'monthlyOrders',
+                'yearlyOrders'
+            ));
+
+        } catch(Exception $e){
 
                 $message = $e->getMessage();
 
@@ -57,7 +119,7 @@ class DashboardController extends Controller
             if ($domain) {
                 Session::put('domain', $domain);
                 Session::put('subDomains', $subDomains);
-                Session::put('full_domain_name', $domain->domain);
+                Session::put('full_domain_name', 'https://' . $domain->domain  . '.hosstify.com');
                 Session::put('domain_id', $domain->id);
             } else {
                 Session::put('domain', null);
