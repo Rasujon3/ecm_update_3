@@ -7,12 +7,12 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0">Purchase new loading page</h1>
+                    <h1 class="m-0">Purchase new landing page</h1>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="{{URL::to('/dashboard')}}">Dashboard</a></li>
-                        <li class="breadcrumb-item active">Purchase new loading page</li>
+                        <li class="breadcrumb-item active">Purchase new landing page</li>
                     </ol>
                 </div><!-- /.col -->
             </div><!-- /.row -->
