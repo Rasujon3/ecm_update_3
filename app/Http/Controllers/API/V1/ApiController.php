@@ -837,7 +837,7 @@ class ApiController extends Controller
 		try
 		{
 			$validator = Validator::make($request->all(), [
-	            'domain' => 'required|string',
+	            'domain' => 'required|string|alpha_dash',
 	        ]);
 
 	        if ($validator->fails()) {
