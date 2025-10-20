@@ -6,6 +6,7 @@ use App\Http\Controllers\BannerTextController;
 use App\Http\Controllers\ConversionController;
 use App\Http\Controllers\ModuleTutorialController;
 use App\Http\Controllers\PackageAddController;
+use App\Http\Controllers\PixelController;
 use App\Http\Controllers\ProductCharacteristicsController;
 use App\Http\Controllers\ProductCharacteristicsDetailsController;
 use App\Http\Controllers\ProductNarrativeController;
@@ -219,5 +220,9 @@ Route::group(['middleware' => 'prevent-back-history'],function(){
     Route::get('/payment/verify/{slug}/{package_id}/{status}', [PackageAddController::class, 'userPaymentStore'])->name('payment.verify');
 
     Route::get('/set-selection/{type}/{id}', [PackageAddController::class, 'setSelection'])->name('set.selection');
+
+    // Pixel
+    Route::resource('pixels', PixelController::class);
+    Route::post('pixel-status-update', [PixelController::class, 'pixelStatusUpdate']);
 
 });

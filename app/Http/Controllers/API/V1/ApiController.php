@@ -8,6 +8,7 @@ use App\Models\BannerText;
 use App\Models\Conversation;
 use App\Models\OrderVariantId;
 use App\Models\PaymentInfo;
+use App\Models\Pixel;
 use App\Models\ProductCharacteristicsDetails;
 use App\Models\ProductCharacteristicsTitle;
 use App\Models\ProductNarrativeDetails;
@@ -2015,6 +2016,95 @@ class ApiController extends Controller
             return response()->json([
                 'status' => !empty($data) || !empty($title),
                 'title' => ($title && $title->title) ? $title->title : '',
+                'data' => $data
+            ]);
+
+        } catch(Exception $e) {
+            return response()->json([
+                'status' => false,
+                'code' => $e->getCode(),
+                'message' => $e->getMessage()
+            ],500);
+        }
+    }
+    public function pixelId(Request $request)
+    {
+        try
+        {
+            $validator = Validator::make($request->all(), [
+                'domain' => [
+                    'required',
+                    'string',
+                    Rule::when(
+                        fn($input) => $input->domain === 'dummy',
+                        ['in:dummy'],
+                        [Rule::exists('domains', 'domain')]
+                    ),
+                ],
+                'slug' => 'nullable|string|exists:sub_domains,slug',
+                'user_id' => [
+                    Rule::when(
+                        fn($input) => $input->domain === 'dummy',
+                        ['required','integer','exists:users,id'],
+                        ['nullable','integer','exists:users,id']
+                    ),
+                ],
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'The given data was invalid',
+                    'data' => $validator->errors()
+                ], 422);
+            }
+
+            if($request->domain === 'dummy')
+            {
+                $data = Pixel::where('user_id',$request->user_id)
+                    ->where('status', "Active")
+                    ->first();
+
+                return response()->json([
+                    'status' => !empty($data),
+                    'data' => $data
+                ]);
+            }
+
+            $domain = null;
+            $domain = domainDetails($request);
+
+            $slug = $request?->slug;
+            $data = [];
+
+            if(!empty($slug)) {
+                $isExist = subDomainExist($domain->id, $domain->user_id, $slug);
+                if (!$isExist) {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Sub domain not found.',
+                    ], 404);
+                }
+            }
+
+            if (!empty($slug)) {
+                $subDomain = subDomainDetails($domain->id, $domain->user_id, $slug);
+
+                $data = Pixel::where('user_id', $domain->user_id)
+                    ->where('domain_id', null)
+                    ->where('sub_domain_id', $subDomain?->id)
+                    ->where('status', "Active")
+                    ->first();
+            } else {
+                $data = Pixel::where('user_id', $domain->user_id)
+                    ->where('domain_id', $domain?->id)
+                    ->where('sub_domain_id', null)
+                    ->where('status', "Active")
+                    ->first();
+            }
+
+            return response()->json([
+                'status' => !empty($data),
                 'data' => $data
             ]);
 

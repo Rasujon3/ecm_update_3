@@ -815,7 +815,7 @@
 
           @if(user()->role_id == 2)
           <li class="nav-item">
-            <a href="{{url('/meta-pixel-settings')}}" class="nav-link">
+            <a href="{{url('/pixels')}}" class="nav-link">
               <i class="nav-icon fas fa-cog"></i>
               <p>
                 Set Meta Pixel

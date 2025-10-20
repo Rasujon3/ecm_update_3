@@ -82,4 +82,6 @@ Route::middleware(['custom.cors', 'throttle:60,1'])->group(function () {
     Route::post('take-a-look', [ApiController::class, 'takeALook']);
 
     Route::post('all-product-content', [ApiController::class, 'allProductContent']);
+
+    Route::post('pixel-id', [ApiController::class, 'pixelId']);
 });
