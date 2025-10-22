@@ -880,19 +880,30 @@ class ApiController extends Controller
         }
         try
         {
-            $type = $request->type;
-            $packages = Package::with(['services' => function ($query) {
-                $query->where('status', 'Active');
-            }])
-                ->where('status', 'Active')
-                ->when($type, function ($query, $type) {
-                    $query->where('package_type', $type);
-                })
-                ->whereHas('services', function ($query) {
-                    $query->where('status', 'Active');
-                })
-                ->latest()
-                ->get();
+            // $type = $request->type;
+            // $packages = Package::with(['services' => function ($query) {
+            //     $query->where('status', 'Active');
+            // }])
+            //     ->where('status', 'Active')
+            //     ->when($type, function ($query, $type) {
+            //         $query->where('package_type', $type);
+            //     })
+            //     ->whereHas('services', function ($query) {
+            //         $query->where('status', 'Active');
+            //     })
+            //     ->latest()
+            //     ->get();
+
+            $query = Package::query();
+            if($request->has('type')){
+                $query->where('package_type',$request->type);
+            }
+
+            // $query->whereHas('services', function ($query) {
+            //         $query->where('status', 'Active');
+            // })
+
+            $packages = $query->with('services')->where('status','Active')->latest()->get();
 
             return response()->json([
                 'status' => count($packages) > 0,
